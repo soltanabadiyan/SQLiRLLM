@@ -1,19 +1,19 @@
 {
-  "generated_utc": "2026-06-27 16:36:44Z",
+  "generated_utc": "2026-06-27 18:23:49Z",
   "run_config": {
     "episodes": "800",
     "targets_n": "60",
     "seed": "42",
-    "skip_sim": "0",
+    "skip_sim": "1",
     "run_tools": "both",
-    "live_targets": "dvwa_sqli dvwa_waf sqli_labs_1 bwapp_sqli juiceshop_login",
-    "sqlirllm_strategies": "error_based,time_blind,union_based",
-    "sqlirllm_max_attempts": "4",
-    "sqlirllm_timeout_s": "15",
+    "live_targets": "dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login",
+    "sqlirllm_strategies": "union_based,error_based,boolean_blind,time_blind,stacked_queries,second_order",
+    "sqlirllm_max_attempts": "1",
+    "sqlirllm_timeout_s": "20",
     "sqlmap_level": "5",
     "sqlmap_risk": "3",
-    "sqlmap_timeout_s": "90",
-    "sqlmap_request_timeout_s": "20",
+    "sqlmap_timeout_s": "180",
+    "sqlmap_request_timeout_s": "30",
     "sqlmap_technique": "BEUSTQ",
     "sqlmap_tamper": "space2comment,charencode",
     "sqlmap_threads": "3"
@@ -39,8 +39,8 @@
     },
     "SQLiRLLM": {
       "detected": 3,
-      "total": 5,
-      "rate": 0.6
+      "total": 7,
+      "rate": 0.4286
     }
   },
   "artifacts": {

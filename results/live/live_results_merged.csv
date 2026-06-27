@@ -1,8 +1,10 @@
 Tool,Platform,Target,Has_WAF,Detected,Duration_s
-SQLMap,Live: sqli-labs,sqli_labs_1,False,False,57.3
-SQLMap,Live: Juice Shop,juiceshop_login,False,False,0.6
-SQLiRLLM,Live: DVWA,dvwa_sqli,False,True,138.7
-SQLiRLLM,Live: DVWA+ModSecurity,dvwa_waf,True,False,104.6
-SQLiRLLM,Live: sqli-labs Less-1,sqli_labs_1,False,True,55.3
-SQLiRLLM,Live: bWAPP,bwapp_sqli,False,False,70.7
-SQLiRLLM,Live: Juice Shop,juiceshop_login,False,True,23.0
+SQLMap,Live: sqli-labs,sqli_labs_1,False,False,173.1
+SQLMap,Live: Juice Shop,juiceshop_login,False,False,1.2
+SQLiRLLM,Live: DVWA,dvwa_sqli,False,True,18.5
+SQLiRLLM,Live: DVWA (medium),dvwa_sqli_medium,False,False,134.1
+SQLiRLLM,Live: DVWA+ModSecurity,dvwa_waf,True,False,127.0
+SQLiRLLM,Live: sqli-labs Less-1,sqli_labs_1,False,True,18.3
+SQLiRLLM,Live: sqli-labs Less-11,sqli_labs_11,False,False,29.5
+SQLiRLLM,Live: bWAPP,bwapp_sqli,False,False,19.9
+SQLiRLLM,Live: Juice Shop,juiceshop_login,False,True,39.1

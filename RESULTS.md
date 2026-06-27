@@ -25,7 +25,7 @@ The repository now supports a single unified command with explicit controls for:
 | Q-Learning lr / γ / ε-decay | 0.15 / 0.90 / 0.995 |
 | Payload model (Tier 2) | gapgpt-qwen-3.6 (Phi-3-Mini analog) |
 | Analysis model (Tier 3) | qwen3-235b-a22b-instruct-2507 (Qwen-Coder analog) |
-| LLM API calls (live) | 273 (+ 5,855 cache hits) |
+| LLM API calls (live, strict no-cache run) | 85 (0 cache hits) |
 | Reward weights (α, β, γ, δ) | 0.60, 0.30, 0.10, 0.05 |
 | Ethical violation penalty | −100 |
 
@@ -122,31 +122,31 @@ The ethics guard correctly refused 100% of out-of-scope actions with zero false 
 
 ## Live Docker Evaluation
 
-Five real, intentionally vulnerable targets were deployed under Docker Compose and tested against the same two end-to-end systems:
+Seven real, intentionally vulnerable targets were deployed under Docker Compose and tested against the same two end-to-end systems:
 
 | Target | Platform | SQLMap | SQLiRLLM | Notes |
 |---|---|---|---|---|
-| `dvwa_sqli` | DVWA | ✗ (timeout) | ✓ | SQLMap timed out at 90s; SQLiRLLM succeeded on 1/3 selected strategies |
-| `dvwa_waf` | DVWA+ModSecurity | ✗ (timeout) | ✗ | WAF blocked most attempts; SQLiRLLM observed 0/3 strategy success |
-| `sqli_labs_1` | sqli-labs Less-1 | ✗ | ✓ | SQLiRLLM succeeded on 2/3 strategies; SQLMap did not confirm exploitability |
-| `bwapp_sqli` | bWAPP | ✗ (timeout) | ✗ | No confirmed exploitation in this bounded-time run |
-| `juiceshop_login` | Juice Shop | ✗ | ✓ | SQLiRLLM succeeded on 3/3 strategies; SQLMap did not confirm in this run |
+| `dvwa_sqli` | DVWA | ✗ (timeout) | ✓ | SQLiRLLM detected with 1/6 strategy success |
+| `dvwa_sqli_medium` | DVWA (medium) | ✗ (timeout) | ✗ | Executed by both tools; no SQLiRLLM strategy succeeded |
+| `dvwa_waf` | DVWA+ModSecurity | ✗ (timeout) | ✗ | WAF target; SQLiRLLM bypass rate was 0.0 in this run |
+| `sqli_labs_1` | sqli-labs Less-1 | ✗ | ✓ | SQLiRLLM detected with 1/6 strategy success |
+| `sqli_labs_11` | sqli-labs Less-11 | ✗ (timeout) | ✗ | Executed by both tools; no SQLiRLLM strategy succeeded |
+| `bwapp_sqli` | bWAPP | ✗ (timeout) | ✗ | Executed by both tools; no confirmed exploitation |
+| `juiceshop_login` | Juice Shop | ✗ | ✓ | SQLiRLLM detected with 3/6 strategy successes |
 
 ### Live Summary
 
 | Domain | Method | Detection rate | ESR |
 |---|---|---|---|
 | Live (Docker) | SQLMap | 0.000 |
-| Live (Docker) | SQLiRLLM | **0.600** | **1.000** |
+| Live (Docker) | SQLiRLLM | **0.429** | **1.000** |
 
 ### Interpretation
 
-- On real Docker targets in this run, SQLiRLLM detected vulnerabilities on **3/5 platforms (60%)**, while SQLMap confirmed **0/5 (0%)** under the configured timeout bounds.
-- The SQLMap configuration used aggressive options with bounded process time (`timeout_s=90`), producing several target-level timeouts (`dvwa_sqli`, `dvwa_waf`, `bwapp_sqli`).
-- SQLiRLLM showed stronger robustness on this run by using multiple semantically different payload variants per strategy, with successful detections on `dvwa_sqli`, `sqli_labs_1`, and `juiceshop_login`.
-- The live results are smaller in scale than the simulation and should be interpreted as a **proof-of-feasibility external validation**, not a statistically definitive benchmark.
-
-Note: `sqli_labs_11` can be run explicitly via `--live-targets "sqli_labs_11"`; it was excluded from the current stable summary table to keep all rows strictly aligned with the finalized JSON outputs in `results/live/sqlmap_results.json` and `results/live/sqlirllm_results.json`.
+- Full target coverage was completed for both tools: all **7/7** selected labs are present in `results/live/sqlmap_results.json` and `results/live/sqlirllm_results.json`.
+- SQLiRLLM detected vulnerabilities on **3/7 platforms (42.9%)** in this strict no-cache run, with successful detections on `dvwa_sqli`, `sqli_labs_1`, and `juiceshop_login`.
+- SQLMap executed all seven targets but had multiple bounded-time outcomes (`timeout_s=180`), resulting in no confirmed detections in this run.
+- Live outcomes remain a feasibility-oriented validation; statistical conclusions should use repeated runs/seeds and confidence intervals.
 
 Results are written to `results/live/`. The merged cross-domain comparison is stored in `results/live/cross_comparison.csv`, with figures in `results/live/live_per_platform.png` and `results/live/sim_comparison.png`.
 

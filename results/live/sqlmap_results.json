@@ -8,7 +8,20 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 90,
+    "duration_s": 180,
+    "request_count_estimate": null,
+    "error": "timeout"
+  },
+  {
+    "tool": "SQLMap",
+    "target": "dvwa_sqli_medium",
+    "platform": "DVWA",
+    "has_waf": false,
+    "vulnerable_detected": false,
+    "injection_types": [],
+    "db_banner": null,
+    "tables_found": 0,
+    "duration_s": 180,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -21,7 +34,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 90,
+    "duration_s": 180,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -34,9 +47,22 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 57.3,
+    "duration_s": 173.1,
     "request_count_estimate": null,
     "error": null
+  },
+  {
+    "tool": "SQLMap",
+    "target": "sqli_labs_11",
+    "platform": "sqli-labs",
+    "has_waf": false,
+    "vulnerable_detected": false,
+    "injection_types": [],
+    "db_banner": null,
+    "tables_found": 0,
+    "duration_s": 180,
+    "request_count_estimate": null,
+    "error": "timeout"
   },
   {
     "tool": "SQLMap",
@@ -47,7 +73,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 90,
+    "duration_s": 180,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -60,7 +86,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 0.6,
+    "duration_s": 1.2,
     "request_count_estimate": null,
     "error": null
   }
