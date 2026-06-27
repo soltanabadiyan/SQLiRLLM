@@ -68,6 +68,20 @@ LIVE_TARGETS: Dict[str, LiveHTTPTarget] = {
         cookie="PHPSESSID=placeholder; security=medium",
         framework="php", database="mysql",
     ),
+    "dvwa_sqli_hard": LiveHTTPTarget(
+        "dvwa_sqli_hard", "DVWA (hard)", "GET",
+        "http://localhost:8095/vulnerabilities/sqli/",
+        param="id", base_value="1",
+        cookie="PHPSESSID=placeholder; security=high",
+        framework="php", database="mysql",
+    ),
+    "dvwa_sqli_max": LiveHTTPTarget(
+        "dvwa_sqli_max", "DVWA (max/impossible)", "GET",
+        "http://localhost:8096/vulnerabilities/sqli/",
+        param="id", base_value="1",
+        cookie="PHPSESSID=placeholder; security=impossible",
+        framework="php", database="mysql",
+    ),
     "dvwa_waf": LiveHTTPTarget(
         "dvwa_waf", "DVWA+ModSecurity", "GET",
         "http://localhost:8080/vulnerabilities/sqli/",

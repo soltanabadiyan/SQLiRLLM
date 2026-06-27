@@ -1,10 +1,12 @@
 Tool,Lab,Target,Requests_to_detection,Detected
 SQLMap,sqli-labs,sqli_labs_1,,False
 SQLMap,Juice Shop,juiceshop_login,,False
-SQLiRLLM,DVWA,dvwa_sqli,6.0,True
-SQLiRLLM,DVWA (medium),dvwa_sqli_medium,6.0,False
-SQLiRLLM,DVWA+ModSecurity,dvwa_waf,6.0,False
+SQLiRLLM,DVWA,dvwa_sqli,13.0,True
+SQLiRLLM,DVWA (medium),dvwa_sqli_medium,13.0,True
+SQLiRLLM,DVWA (hard),dvwa_sqli_hard,13.0,True
+SQLiRLLM,DVWA (max/impossible),dvwa_sqli_max,13.0,True
+SQLiRLLM,DVWA+ModSecurity,dvwa_waf,18.0,False
 SQLiRLLM,sqli-labs Less-1,sqli_labs_1,1.0,True
-SQLiRLLM,sqli-labs Less-11,sqli_labs_11,6.0,False
-SQLiRLLM,bWAPP,bwapp_sqli,6.0,False
-SQLiRLLM,Juice Shop,juiceshop_login,2.0,True
+SQLiRLLM,sqli-labs Less-11,sqli_labs_11,18.0,False
+SQLiRLLM,bWAPP,bwapp_sqli,18.0,False
+SQLiRLLM,Juice Shop,juiceshop_login,1.0,True

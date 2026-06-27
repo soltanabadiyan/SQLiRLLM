@@ -68,6 +68,46 @@ services:
     networks:
       - sqlilab
 
+  # ── DVWA (Hard difficulty) ────────────────────────────────────────────────
+  dvwa-hard:
+    image: ghcr.io/digininja/dvwa:latest
+    container_name: sqli_dvwa_hard
+    restart: unless-stopped
+    environment:
+      DB_SERVER: dvwa-db
+      DB_DATABASE: dvwa
+      DB_USER: dvwa
+      DB_PASSWORD: p@ssw0rd
+      DB_PORT: 3306
+      DIFFICULTY: 2
+    depends_on:
+      dvwa-db:
+        condition: service_healthy
+    ports:
+      - "8095:80"
+    networks:
+      - sqlilab
+
+  # ── DVWA (Max difficulty/Impossible) ───────────────────────────────────────
+  dvwa-max:
+    image: ghcr.io/digininja/dvwa:latest
+    container_name: sqli_dvwa_max
+    restart: unless-stopped
+    environment:
+      DB_SERVER: dvwa-db
+      DB_DATABASE: dvwa
+      DB_USER: dvwa
+      DB_PASSWORD: p@ssw0rd
+      DB_PORT: 3306
+      DIFFICULTY: 3
+    depends_on:
+      dvwa-db:
+        condition: service_healthy
+    ports:
+      - "8096:80"
+    networks:
+      - sqlilab
+
   # ── bWAPP (Buggy Web Application) ──────────────────────────────────────────
   bwapp:
     image: raesene/bwapp:latest

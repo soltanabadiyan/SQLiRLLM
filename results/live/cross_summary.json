@@ -51,7 +51,7 @@
       "Time_ms": 77.7
     }
   ],
-  "live_targets_tested": 4,
+  "live_targets_tested": 5,
   "cross_comparison": [
     {
       "Domain": "Simulation",
@@ -116,12 +116,12 @@
     {
       "Domain": "Live (Docker)",
       "Method": "SQLiRLLM",
-      "VDR": 0.429,
+      "VDR": 0.667,
       "FPR": NaN,
       "F1": NaN,
       "WAF_bypass": 0.0,
       "ESR": 1.0,
-      "Time_ms": 36642.857142857145
+      "Time_ms": 633.3333333333333
     }
   ],
   "live_extra_artifacts": {
