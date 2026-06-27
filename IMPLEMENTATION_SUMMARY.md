@@ -288,12 +288,12 @@ python -m experiments.live.sqlirllm_runner \
 | dvwa_sqli_medium | ✅ | 1/6 | Medium validation bypassed |
 | dvwa_sqli_hard | ✅ | 1/6 | **New:** Hard validation bypassed |
 | dvwa_sqli_max | ✅ | 1/6 | **New:** Impossible validation bypassed |
-| sqli_labs_1 | ✅ | 2/6 | Multiple strategies effective |
+| sqli_labs_1 | ✅ | 4/6 | Multiple strategies effective |
 | juiceshop_login | ✅ | 5/6 | Highest success (83.3%) |
 | dvwa_waf (ModSecurity) | ❌ | 0/6 | WAF bypass: 0.0% (realistic) |
 | sqli_labs_11 | ❌ | 0/6 | Protocol constraint |
-| bwapp_sqli | ❌ | 0/6 | Target limitation |
-| **TOTAL** | — | **6/9 = 66.7%** | All DVWA levels included |
+| bwapp_sqli | ✅ | 3/6 | Default login/session bootstrap enabled coverage |
+| **TOTAL** | — | **7/9 = 77.8%** | All DVWA levels included |
 
 ### Validation
 
@@ -301,7 +301,7 @@ python -m experiments.live.sqlirllm_runner \
 |---|---|---|
 | Code implementation | ✅ Complete | 8 functions + 4 methods + prompts |
 | Docker setup | ✅ Complete | 9 vulnerable targets running (added dvwa_hard, dvwa_max) |
-| Extended test | ✅ Complete | All 9 targets tested, 66.7% detection |
+| Extended test | ✅ Complete | All 9 targets tested, 77.8% detection |
 | Documentation | ✅ Updated | RESULTS.md, README.md, IMPLEMENTATION_SUMMARY.md |
 | HTML paper | ✅ Updated | Extended benchmark tables and conclusion integrated |
 
@@ -316,11 +316,11 @@ SQLiRLLM successfully detects vulnerabilities across **all 4 DVWA difficulty lev
 
 | Metric | Value | Interpretation |
 |---|---|---|
-| **Overall Detection Rate** | 6/9 = 66.7% | Improved from 7-target baseline (42.9%) |
-| **Non-WAF VDR** | 6/8 = 75.0% | Framework capability without WAF |
+| **Overall Detection Rate** | 7/9 = 77.8% | Improved from 7-target baseline (42.9%) |
+| **Non-WAF VDR** | 7/8 = 87.5% | Framework capability without WAF |
 | **Multi-Difficulty Success** | 4/4 = 100% | All DVWA levels detected |
 | **ModSecurity CRS** | 0/6 = 0.0% | Realistic WAF challenge (expected) |
-| **Mean Time/Target** | 0.62s | Efficient evaluation |
+| **Mean Time/Target** | 8.0s | Increased by authenticated multi-step targets |
 
 ---
 

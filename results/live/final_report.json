@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-06-27 22:32:52Z",
+  "generated_utc": "2026-06-27 22:48:58Z",
   "run_config": {
     "episodes": "400",
     "targets_n": "40",
     "seed": "42",
-    "skip_sim": "0",
+    "skip_sim": "1",
     "run_tools": "both",
     "live_targets": "dvwa_sqli dvwa_sqli_medium dvwa_sqli_hard dvwa_sqli_max dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login",
     "sqlirllm_strategies": "union_based,error_based,boolean_blind,time_blind,stacked_queries,second_order",
@@ -13,10 +13,10 @@
     "sqlmap_level": "3",
     "sqlmap_risk": "2",
     "sqlmap_timeout_s": "45",
-    "sqlmap_request_timeout_s": "15",
+    "sqlmap_request_timeout_s": "10",
     "sqlmap_technique": "BEUSTQ",
-    "sqlmap_tamper": "space2comment,charencode",
-    "sqlmap_threads": "2"
+    "sqlmap_tamper": "target-default",
+    "sqlmap_threads": "1"
   },
   "simulation": {
     "SQLiRLLM": {
@@ -33,14 +33,14 @@
   },
   "live": {
     "SQLMap": {
-      "detected": 4,
+      "detected": 5,
       "total": 9,
-      "rate": 0.4444
+      "rate": 0.5556
     },
     "SQLiRLLM": {
-      "detected": 6,
+      "detected": 7,
       "total": 9,
-      "rate": 0.6667
+      "rate": 0.7778
     }
   },
   "artifacts": {

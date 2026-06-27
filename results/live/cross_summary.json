@@ -106,22 +106,22 @@
     {
       "Domain": "Live (Docker)",
       "Method": "SQLMap",
-      "VDR": 0.444,
+      "VDR": 0.556,
       "FPR": NaN,
       "F1": NaN,
       "WAF_bypass": 0.0,
       "ESR": NaN,
-      "Time_ms": 4433.333333333334
+      "Time_ms": 4322.222222222222
     },
     {
       "Domain": "Live (Docker)",
       "Method": "SQLiRLLM",
-      "VDR": 0.667,
+      "VDR": 0.778,
       "FPR": NaN,
       "F1": NaN,
       "WAF_bypass": 0.0,
       "ESR": 1.0,
-      "Time_ms": 2200.0
+      "Time_ms": 7966.666666666667
     }
   ],
   "live_extra_artifacts": {

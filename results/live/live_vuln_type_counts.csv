@@ -83,19 +83,19 @@ Juice Shop,time_blind,SQLMap,0,0
 Juice Shop,time_blind,SQLiRLLM,1,1
 Juice Shop,union_based,SQLMap,0,0
 Juice Shop,union_based,SQLiRLLM,1,1
-bWAPP,boolean_blind,SQLMap,0,0
+bWAPP,boolean_blind,SQLMap,1,1
 bWAPP,boolean_blind,SQLiRLLM,0,0
-bWAPP,error_based,SQLMap,0,0
+bWAPP,error_based,SQLMap,1,1
 bWAPP,error_based,SQLiRLLM,0,0
 bWAPP,other,SQLMap,0,0
 bWAPP,other,SQLiRLLM,0,0
 bWAPP,second_order,SQLMap,0,0
-bWAPP,second_order,SQLiRLLM,0,0
+bWAPP,second_order,SQLiRLLM,1,1
 bWAPP,stacked_queries,SQLMap,0,0
-bWAPP,stacked_queries,SQLiRLLM,0,0
-bWAPP,time_blind,SQLMap,0,0
-bWAPP,time_blind,SQLiRLLM,0,0
-bWAPP,union_based,SQLMap,0,0
+bWAPP,stacked_queries,SQLiRLLM,1,1
+bWAPP,time_blind,SQLMap,1,1
+bWAPP,time_blind,SQLiRLLM,1,1
+bWAPP,union_based,SQLMap,1,1
 bWAPP,union_based,SQLiRLLM,0,0
 sqli-labs,boolean_blind,SQLMap,2,1
 sqli-labs,boolean_blind,SQLiRLLM,0,0
@@ -118,9 +118,9 @@ sqli-labs Less-1,error_based,SQLiRLLM,1,1
 sqli-labs Less-1,other,SQLMap,0,0
 sqli-labs Less-1,other,SQLiRLLM,0,0
 sqli-labs Less-1,second_order,SQLMap,0,0
-sqli-labs Less-1,second_order,SQLiRLLM,0,0
+sqli-labs Less-1,second_order,SQLiRLLM,1,1
 sqli-labs Less-1,stacked_queries,SQLMap,0,0
-sqli-labs Less-1,stacked_queries,SQLiRLLM,0,0
+sqli-labs Less-1,stacked_queries,SQLiRLLM,1,1
 sqli-labs Less-1,time_blind,SQLMap,0,0
 sqli-labs Less-1,time_blind,SQLiRLLM,0,0
 sqli-labs Less-1,union_based,SQLMap,0,0

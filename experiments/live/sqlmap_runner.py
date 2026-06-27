@@ -216,6 +216,26 @@ def _prepare_bwapp() -> None:
         return
 
 
+def _get_bwapp_session(level: int = 0) -> Optional[str]:
+    """Obtain a bWAPP PHPSESSID using default benchmark credentials bee/bug."""
+    try:
+        login = subprocess.run(
+            [
+                "curl", "-s", "-c", "-", "-b", "",
+                "-d", f"login=bee&password=bug&security_level={level}&form=submit",
+                "http://localhost:8091/login.php",
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        m = re.search(r"PHPSESSID\s+(\S+)", login.stdout)
+        sid = m.group(1) if m else None
+        if not sid:
+            return None
+        return f"PHPSESSID={sid}; security_level={level}"
+    except Exception:
+        return None
+
+
 # --------------------------------------------------------------------------- #
 # Execution and result parsing                                                 #
 # --------------------------------------------------------------------------- #
@@ -265,6 +285,9 @@ def run_sqlmap(
         _prepare_sqli_labs()
     elif "bwapp" in target.name:
         _prepare_bwapp()
+        cookie = _get_bwapp_session(level=0)
+        if cookie:
+            target.cookie = cookie
 
     cmd = target.sqlmap_args(
         level=level,

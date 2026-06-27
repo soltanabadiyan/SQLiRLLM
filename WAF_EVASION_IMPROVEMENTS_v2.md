@@ -178,7 +178,7 @@ Sophisticated multi-stage analysis.
 | Domain | VDR | WAF Bypass | Reason |
 |---|---|---|---|
 | **Simulation** | 41.5% | 62.2% | Simple keyword matching; single decode pass |
-| **Live (unprotected)** | 75.0% (6/8) | N/A | Real vulnerable apps; expanded to DVWA low/medium/hard/max |
+| **Live (unprotected)** | 87.5% (7/8) | N/A | Real vulnerable apps with authentication/bootstrap support |
 | **Live (ModSec CRS)** | N/A | 0.0% | Production semantic WAF; multi-layer defense |
 
 **Key Insight:** The gap isn't a failure—it's evidence that:
@@ -197,13 +197,13 @@ dvwa_sqli:           1/6 succeeded (16.7%)
 dvwa_sqli_medium:    1/6 succeeded (16.7%)
 dvwa_sqli_hard:      1/6 succeeded (16.7%)
 dvwa_sqli_max:       1/6 succeeded (16.7%)
-sqli_labs_1:         2/6 succeeded (33.3%)
+sqli_labs_1:         4/6 succeeded (66.7%)
 sqli_labs_11:        0/6 succeeded (0%)
-bwapp_sqli:          0/6 succeeded (0%)
+bwapp_sqli:          3/6 succeeded (50.0%)
 juiceshop_login:     5/6 succeeded (83.3%)
 dvwa_waf (CRS):      0/6 succeeded (0% - as expected)
 ───────────────────────────────────────────────
-TOTAL:               6/9 detected (66.7%)
+TOTAL:               7/9 detected (77.8%)
 ```
 
 **Detection on unprotected targets maintained** despite WAF-evasion focus.

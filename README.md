@@ -179,12 +179,18 @@ docker compose -f docker/docker-compose.yml run --rm toolbox sqlmap --version
 
 | URL | Platform | Notes |
 |---|---|---|
-| http://localhost:8090 | DVWA | admin / password |
-| http://localhost:8091/install.php | bWAPP | click Install, then bee / bug |
+| http://localhost:8090 | DVWA | default benchmark login: admin / password |
+| http://localhost:8091/install.php | bWAPP | default benchmark login: bee / bug |
 | http://localhost:8092 | OWASP Juice Shop | auto-initialized |
 | http://localhost:8093/WebGoat | WebGoat | auto-initialized |
-| http://localhost:8094 | sqli-labs | classic MySQL labs |
+| http://localhost:8094 | sqli-labs | classic MySQL labs; DB reset is triggered automatically by live runners |
 | http://localhost:8080 | DVWA + ModSecurity WAF | WAF bypass test |
+
+The live runners now prepare benchmark labs automatically before probing:
+
+1. DVWA family: attempts token-aware login with default credentials and security-level cookies.
+2. bWAPP: triggers install endpoint if needed, then logs in as `bee/bug` with security level `low`.
+3. sqli-labs: triggers `sql-connections/setup-db.php` so Less-1 and Less-11 have a live database.
 
 ### 5 — Run the live comparison pipeline
 
@@ -224,16 +230,16 @@ All live results → `results/live/`.
 | dvwa_sqli_medium | DVWA | Medium | 1/6 ✅ | POST |
 | dvwa_sqli_hard | DVWA | Hard | 1/6 ✅ | GET |
 | dvwa_sqli_max | DVWA | Impossible | 1/6 ✅ | GET |
-| sqli_labs_1 | sqli-labs Less-1 | — | 2/6 ✅ | GET |
+| sqli_labs_1 | sqli-labs Less-1 | — | 4/6 ✅ | GET |
 | juiceshop_login | Juice Shop | — | 5/6 ✅ | POST |
 | sqli_labs_11 | sqli-labs Less-11 | — | 0/6 | POST |
-| bwapp_sqli | bWAPP | — | 0/6 | GET |
+| bwapp_sqli | bWAPP | — | 3/6 ✅ | GET |
 | dvwa_waf | DVWA + ModSecurity CRS | Low | 0/6 (WAF bypass: 0.0%) | GET |
-| **TOTAL** | **9 platforms** | **mixed** | **6/9 = 66.7%** | — |
+| **TOTAL** | **9 platforms** | **mixed** | **7/9 = 77.8%** | — |
 
 **Key Findings:**
 - ✅ DVWA difficulty scaling: All 4 difficulty levels detected (low → medium → hard → impossible)
-- ✅ Real-world platforms: Juice Shop (83.3%), sqli-labs-1 (33.3%)
+- ✅ Real-world platforms: Juice Shop (83.3%), sqli-labs-1 (66.7%), bWAPP (50.0%)
 - ✅ WAF challenge: ModSecurity CRS remains resistant (0.0% bypass)
 - ✅ Consistency: Results stable across multiple configurations
 
@@ -292,15 +298,16 @@ Observed live detection rates:
 
 | Tool | Live detection rate | Coverage |
 |---|---|---|
-| SQLMap | 4/9 = 44.4% | DVWA low/medium, sqli-labs-1, sqli-labs-11 |
-| **SQLiRLLM** | **6/9 = 66.7%** | All DVWA levels, Juice Shop, sqli-labs-1 |
+| SQLMap | 5/9 = 55.6% | DVWA low/medium, sqli-labs-1, sqli-labs-11, bWAPP |
+| **SQLiRLLM** | **7/9 = 77.8%** | All DVWA levels, Juice Shop, sqli-labs-1, bWAPP |
 
 **Detailed breakdown:**
 - **DVWA Difficulty Levels (all 4 detected):** Confirms robustness across low → medium → hard → impossible
 - **Juice Shop:** 5/6 strategies detected (high success)
-- **sqli-labs-1:** 2/6 strategies detected
+- **sqli-labs-1:** 4/6 strategies detected
+- **bWAPP:** 3/6 strategies detected after automatic login/session bootstrap
 - **ModSecurity WAF:** 0/6 (WAF bypass remains at 0.0% — documented limitation)
-- **bWAPP & sqli-labs-11:** 0/6 (target-specific constraints)
+- **sqli-labs-11:** 0/6 (target-specific constraint)
 
 This extended evaluation demonstrates that SQLiRLLM's vulnerability detection generalizes across multiple difficulty settings and platforms beyond the initial 7-target scope.
 
@@ -402,7 +409,7 @@ The script performs:
 
 1. Simulation comparison (`experiments.run_comparison`)
 2. Docker stack startup (`docker compose up -d`)
-3. Live SQLMap + SQLiRLLM runs
+3. Live SQLMap + SQLiRLLM runs, including automatic lab initialization and default-login session setup where needed
 4. Cross-comparison merge + final report generation
 
 Final report outputs:
@@ -500,8 +507,8 @@ Observed live summary for selected labs:
 
 | Tool | Detected / Total | Detection rate |
 |---|---:|---:|
-| SQLMap | 0 / 9 | 0.000 |
-| SQLiRLLM | 6 / 9 | 0.667 |
+| SQLMap | 5 / 9 | 0.556 |
+| SQLiRLLM | 7 / 9 | 0.778 |
 
 \* SQLMap rows with timeout/errors are excluded from the denominator by the current report builder.
 
@@ -509,17 +516,17 @@ Per-target live outcomes (same run):
 
 | Target | SQLMap (bounded-time) | SQLiRLLM (strategies succeeded/tried, best strategy) |
 |---|---|---|
-| dvwa_sqli | false | 1/6, none |
-| dvwa_sqli_medium | false | 1/6, none |
+| dvwa_sqli | true | 1/6, none |
+| dvwa_sqli_medium | true | 1/6, none |
 | dvwa_sqli_hard | false | 1/6, none |
 | dvwa_sqli_max | false | 1/6, none |
 | dvwa_waf | false | 0/6, none |
-| sqli_labs_1 | false | 2/6, error_based |
-| sqli_labs_11 | false | 0/6, none |
-| bwapp_sqli | false | 0/6, none |
+| sqli_labs_1 | true | 4/6, error_based |
+| sqli_labs_11 | true | 0/6, none |
+| bwapp_sqli | true | 3/6, second_order |
 | juiceshop_login | false | 5/6, error_based |
 
-This specific configuration intentionally used aggressive SQLMap settings (`level=5`, `risk=3`) with a strict process timeout (`90s`), which increased timeout incidence on some targets.
+This specific configuration used authenticated lab initialization, direct parameter targeting, and bounded SQLMap settings (`level=3`, `risk=2`, `timeout-s=45`) to produce reproducible cross-method comparisons on all 9 live targets.
 
 ---
 
