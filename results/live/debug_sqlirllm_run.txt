@@ -1,0 +1,24 @@
+  [sqlirllm] max_attempts=2 request_timeout=15.0s seed=42 llm_cache=False strict_llm_api=False
+  [sqlirllm] dvwa_sqli  (DVWA, waf=False)
+    -> succeeded=3/6 waf_bypass=None best=None time=23.3s
+  [sqlirllm] dvwa_sqli_medium  (DVWA (medium), waf=False)
+    -> succeeded=5/6 waf_bypass=None best=union_based time=26.2s
+  [sqlirllm] dvwa_sqli_hard  (DVWA (hard), waf=False)
+    -> succeeded=4/6 waf_bypass=None best=None time=60.9s
+  [sqlirllm] dvwa_sqli_max  (DVWA (max/impossible), waf=False)
+    -> succeeded=0/6 waf_bypass=None best=None time=42.8s
+  [sqlirllm] dvwa_waf  (DVWA+ModSecurity, waf=True)
+    -> succeeded=1/6 waf_bypass=0.09090909090909091 best=None time=31.6s
+  [sqlirllm] sqli_labs_1  (sqli-labs Less-1, waf=False)
+    -> succeeded=4/6 waf_bypass=None best=second_order time=38.8s
+  [sqlirllm] sqli_labs_11  (sqli-labs Less-11, waf=False)
+    -> succeeded=4/6 waf_bypass=None best=None time=166.4s
+  [sqlirllm] bwapp_sqli  (bWAPP, waf=False)
+    -> succeeded=0/6 waf_bypass=None best=None time=36.1s
+  [sqlirllm] juiceshop_login  (Juice Shop, waf=False)
+[LLMClient] API call failed after retries: APIConnectionError: Connection error.
+    -> succeeded=2/6 waf_bypass=None best=None time=235.5s
+  [sqlirllm] telemetry api_calls=150 cache_hits=0 offline_fallbacks=0 analyzer_llm=88 analyzer_heuristic=1
+
+  SQLiRLLM live results -> /home/morteza/Desktop/PHD/wafa/code/results/live/sqlirllm_results.json
+  SQLiRLLM telemetry -> /home/morteza/Desktop/PHD/wafa/code/results/live/sqlirllm_telemetry.json

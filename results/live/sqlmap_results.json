@@ -11,10 +11,11 @@
       "time-based blind",
       "UNION query"
     ],
-    "db_banner": "MySQL >= 8.0.0",
+    "db_banner": "MySQL >= 5.6",
     "tables_found": 0,
-    "duration_s": 1.2,
+    "duration_s": 20.0,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -29,10 +30,11 @@
       "time-based blind",
       "UNION query"
     ],
-    "db_banner": "MySQL >= 8.0.0",
+    "db_banner": "MySQL >= 5.6",
     "tables_found": 0,
-    "duration_s": 1.1,
+    "duration_s": 19.9,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -44,8 +46,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 12.3,
+    "duration_s": 51.0,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -57,8 +60,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 9.9,
+    "duration_s": 50.8,
     "request_count_estimate": null,
+    "expected_vulnerable": false,
     "error": null
   },
   {
@@ -70,8 +74,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 9.2,
+    "duration_s": 45.3,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -86,10 +91,11 @@
       "time-based blind",
       "UNION query"
     ],
-    "db_banner": "MySQL >= 5.0.0",
+    "db_banner": "MySQL >= 5.5",
     "tables_found": 0,
-    "duration_s": 1.1,
+    "duration_s": 14.8,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -104,10 +110,11 @@
       "time-based blind",
       "UNION query"
     ],
-    "db_banner": "MySQL >= 5.0.0",
+    "db_banner": "MySQL >= 5.5",
     "tables_found": 0,
-    "duration_s": 1.1,
+    "duration_s": 15.2,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -122,10 +129,11 @@
       "time-based blind",
       "UNION query"
     ],
-    "db_banner": "MySQL >= 5.0.0",
+    "db_banner": "MySQL >= 5.5",
     "tables_found": 0,
-    "duration_s": 2.2,
+    "duration_s": 16.3,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   },
   {
@@ -137,8 +145,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 0.8,
+    "duration_s": 0.7,
     "request_count_estimate": null,
+    "expected_vulnerable": true,
     "error": null
   }
 ]

@@ -8,12 +8,12 @@ SQLMap,sqli-labs,sqli_labs_1,,True
 SQLMap,sqli-labs,sqli_labs_11,,True
 SQLMap,bWAPP,bwapp_sqli,,True
 SQLMap,Juice Shop,juiceshop_login,,False
-SQLiRLLM,DVWA,dvwa_sqli,17.0,True
-SQLiRLLM,DVWA (medium),dvwa_sqli_medium,17.0,True
-SQLiRLLM,DVWA (hard),dvwa_sqli_hard,17.0,True
-SQLiRLLM,DVWA (max/impossible),dvwa_sqli_max,17.0,True
-SQLiRLLM,DVWA+ModSecurity,dvwa_waf,24.0,False
+SQLiRLLM,DVWA,dvwa_sqli,3.0,True
+SQLiRLLM,DVWA (medium),dvwa_sqli_medium,1.0,True
+SQLiRLLM,DVWA (hard),dvwa_sqli_hard,3.0,True
+SQLiRLLM,DVWA (max/impossible),dvwa_sqli_max,8.0,False
+SQLiRLLM,DVWA+ModSecurity,dvwa_waf,3.0,True
 SQLiRLLM,sqli-labs Less-1,sqli_labs_1,3.0,True
-SQLiRLLM,sqli-labs Less-11,sqli_labs_11,24.0,False
-SQLiRLLM,bWAPP,bwapp_sqli,13.0,True
-SQLiRLLM,Juice Shop,juiceshop_login,1.0,True
+SQLiRLLM,sqli-labs Less-11,sqli_labs_11,3.0,True
+SQLiRLLM,bWAPP,bwapp_sqli,7.0,True
+SQLiRLLM,Juice Shop,juiceshop_login,6.0,True

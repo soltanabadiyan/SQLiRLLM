@@ -1,11 +1,11 @@
 {
   "llm_configured": true,
-  "api_calls": 10,
-  "cache_hits": 339,
+  "api_calls": 0,
+  "cache_hits": 0,
   "offline_payload_fallbacks": 0,
-  "analyzer_llm_calls": 174,
-  "analyzer_heuristic_calls": 0,
-  "llm_cache_enabled": true,
+  "analyzer_llm_calls": 0,
+  "analyzer_heuristic_calls": 58,
+  "llm_cache_enabled": false,
   "strict_llm_api": false,
-  "verify_api_ping": true
+  "verify_api_ping": false
 }

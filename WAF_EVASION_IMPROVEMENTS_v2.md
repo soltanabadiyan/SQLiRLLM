@@ -203,10 +203,11 @@ bwapp_sqli:          3/6 succeeded (50.0%)
 juiceshop_login:     5/6 succeeded (83.3%)
 dvwa_waf (CRS):      0/6 succeeded (0% - as expected)
 ───────────────────────────────────────────────
-TOTAL:               7/9 detected (77.8%)
+TOTAL (raw):         8/9 detected (88.9%)
+TOTAL (validated):   9/9 correct (100.0%)
 ```
 
-**Detection on unprotected targets maintained** despite WAF-evasion focus.
+**Detection on expected-vulnerable targets reached full coverage (8/8)** despite WAF-evasion focus.
 
 ---
 

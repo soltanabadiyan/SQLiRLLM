@@ -2,29 +2,29 @@ Lab,VulnType,Tool,Detected,Total_Observed
 DVWA,boolean_blind,SQLMap,2,1
 DVWA,boolean_blind,SQLiRLLM,0,0
 DVWA,error_based,SQLMap,2,1
-DVWA,error_based,SQLiRLLM,0,0
+DVWA,error_based,SQLiRLLM,1,1
 DVWA,other,SQLMap,0,0
 DVWA,other,SQLiRLLM,0,0
 DVWA,second_order,SQLMap,0,0
 DVWA,second_order,SQLiRLLM,0,0
 DVWA,stacked_queries,SQLMap,0,0
-DVWA,stacked_queries,SQLiRLLM,1,1
+DVWA,stacked_queries,SQLiRLLM,0,0
 DVWA,time_blind,SQLMap,2,1
-DVWA,time_blind,SQLiRLLM,0,0
+DVWA,time_blind,SQLiRLLM,1,1
 DVWA,union_based,SQLMap,2,1
 DVWA,union_based,SQLiRLLM,0,0
 DVWA (hard),boolean_blind,SQLMap,0,0
 DVWA (hard),boolean_blind,SQLiRLLM,0,0
 DVWA (hard),error_based,SQLMap,0,0
-DVWA (hard),error_based,SQLiRLLM,0,0
+DVWA (hard),error_based,SQLiRLLM,1,1
 DVWA (hard),other,SQLMap,0,0
 DVWA (hard),other,SQLiRLLM,0,0
 DVWA (hard),second_order,SQLMap,0,0
 DVWA (hard),second_order,SQLiRLLM,0,0
 DVWA (hard),stacked_queries,SQLMap,0,0
-DVWA (hard),stacked_queries,SQLiRLLM,1,1
+DVWA (hard),stacked_queries,SQLiRLLM,0,0
 DVWA (hard),time_blind,SQLMap,0,0
-DVWA (hard),time_blind,SQLiRLLM,0,0
+DVWA (hard),time_blind,SQLiRLLM,1,1
 DVWA (hard),union_based,SQLMap,0,0
 DVWA (hard),union_based,SQLiRLLM,0,0
 DVWA (max/impossible),boolean_blind,SQLMap,0,0
@@ -36,7 +36,7 @@ DVWA (max/impossible),other,SQLiRLLM,0,0
 DVWA (max/impossible),second_order,SQLMap,0,0
 DVWA (max/impossible),second_order,SQLiRLLM,0,0
 DVWA (max/impossible),stacked_queries,SQLMap,0,0
-DVWA (max/impossible),stacked_queries,SQLiRLLM,1,1
+DVWA (max/impossible),stacked_queries,SQLiRLLM,0,0
 DVWA (max/impossible),time_blind,SQLMap,0,0
 DVWA (max/impossible),time_blind,SQLiRLLM,0,0
 DVWA (max/impossible),union_based,SQLMap,0,0
@@ -44,21 +44,21 @@ DVWA (max/impossible),union_based,SQLiRLLM,0,0
 DVWA (medium),boolean_blind,SQLMap,0,0
 DVWA (medium),boolean_blind,SQLiRLLM,0,0
 DVWA (medium),error_based,SQLMap,0,0
-DVWA (medium),error_based,SQLiRLLM,0,0
+DVWA (medium),error_based,SQLiRLLM,1,1
 DVWA (medium),other,SQLMap,0,0
 DVWA (medium),other,SQLiRLLM,0,0
 DVWA (medium),second_order,SQLMap,0,0
 DVWA (medium),second_order,SQLiRLLM,0,0
 DVWA (medium),stacked_queries,SQLMap,0,0
-DVWA (medium),stacked_queries,SQLiRLLM,1,1
+DVWA (medium),stacked_queries,SQLiRLLM,0,0
 DVWA (medium),time_blind,SQLMap,0,0
-DVWA (medium),time_blind,SQLiRLLM,0,0
+DVWA (medium),time_blind,SQLiRLLM,1,1
 DVWA (medium),union_based,SQLMap,0,0
-DVWA (medium),union_based,SQLiRLLM,0,0
+DVWA (medium),union_based,SQLiRLLM,1,1
 DVWA+ModSecurity,boolean_blind,SQLMap,0,0
 DVWA+ModSecurity,boolean_blind,SQLiRLLM,0,0
 DVWA+ModSecurity,error_based,SQLMap,0,0
-DVWA+ModSecurity,error_based,SQLiRLLM,0,0
+DVWA+ModSecurity,error_based,SQLiRLLM,1,1
 DVWA+ModSecurity,other,SQLMap,0,0
 DVWA+ModSecurity,other,SQLiRLLM,0,0
 DVWA+ModSecurity,second_order,SQLMap,0,0
@@ -72,17 +72,17 @@ DVWA+ModSecurity,union_based,SQLiRLLM,0,0
 Juice Shop,boolean_blind,SQLMap,0,0
 Juice Shop,boolean_blind,SQLiRLLM,0,0
 Juice Shop,error_based,SQLMap,0,0
-Juice Shop,error_based,SQLiRLLM,1,1
+Juice Shop,error_based,SQLiRLLM,0,0
 Juice Shop,other,SQLMap,0,0
 Juice Shop,other,SQLiRLLM,0,0
 Juice Shop,second_order,SQLMap,0,0
-Juice Shop,second_order,SQLiRLLM,1,1
+Juice Shop,second_order,SQLiRLLM,0,0
 Juice Shop,stacked_queries,SQLMap,0,0
-Juice Shop,stacked_queries,SQLiRLLM,1,1
+Juice Shop,stacked_queries,SQLiRLLM,0,0
 Juice Shop,time_blind,SQLMap,0,0
-Juice Shop,time_blind,SQLiRLLM,1,1
+Juice Shop,time_blind,SQLiRLLM,0,0
 Juice Shop,union_based,SQLMap,0,0
-Juice Shop,union_based,SQLiRLLM,1,1
+Juice Shop,union_based,SQLiRLLM,0,0
 bWAPP,boolean_blind,SQLMap,1,1
 bWAPP,boolean_blind,SQLiRLLM,0,0
 bWAPP,error_based,SQLMap,1,1
@@ -90,9 +90,9 @@ bWAPP,error_based,SQLiRLLM,0,0
 bWAPP,other,SQLMap,0,0
 bWAPP,other,SQLiRLLM,0,0
 bWAPP,second_order,SQLMap,0,0
-bWAPP,second_order,SQLiRLLM,1,1
+bWAPP,second_order,SQLiRLLM,0,0
 bWAPP,stacked_queries,SQLMap,0,0
-bWAPP,stacked_queries,SQLiRLLM,1,1
+bWAPP,stacked_queries,SQLiRLLM,0,0
 bWAPP,time_blind,SQLMap,1,1
 bWAPP,time_blind,SQLiRLLM,1,1
 bWAPP,union_based,SQLMap,1,1
@@ -118,17 +118,17 @@ sqli-labs Less-1,error_based,SQLiRLLM,1,1
 sqli-labs Less-1,other,SQLMap,0,0
 sqli-labs Less-1,other,SQLiRLLM,0,0
 sqli-labs Less-1,second_order,SQLMap,0,0
-sqli-labs Less-1,second_order,SQLiRLLM,1,1
+sqli-labs Less-1,second_order,SQLiRLLM,0,0
 sqli-labs Less-1,stacked_queries,SQLMap,0,0
-sqli-labs Less-1,stacked_queries,SQLiRLLM,1,1
+sqli-labs Less-1,stacked_queries,SQLiRLLM,0,0
 sqli-labs Less-1,time_blind,SQLMap,0,0
-sqli-labs Less-1,time_blind,SQLiRLLM,0,0
+sqli-labs Less-1,time_blind,SQLiRLLM,1,1
 sqli-labs Less-1,union_based,SQLMap,0,0
-sqli-labs Less-1,union_based,SQLiRLLM,1,1
+sqli-labs Less-1,union_based,SQLiRLLM,0,0
 sqli-labs Less-11,boolean_blind,SQLMap,0,0
-sqli-labs Less-11,boolean_blind,SQLiRLLM,0,0
+sqli-labs Less-11,boolean_blind,SQLiRLLM,1,1
 sqli-labs Less-11,error_based,SQLMap,0,0
-sqli-labs Less-11,error_based,SQLiRLLM,0,0
+sqli-labs Less-11,error_based,SQLiRLLM,1,1
 sqli-labs Less-11,other,SQLMap,0,0
 sqli-labs Less-11,other,SQLiRLLM,0,0
 sqli-labs Less-11,second_order,SQLMap,0,0

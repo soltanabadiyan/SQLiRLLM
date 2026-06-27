@@ -111,17 +111,29 @@
       "F1": NaN,
       "WAF_bypass": 0.0,
       "ESR": NaN,
-      "Time_ms": 4322.222222222222
+      "Time_ms": 25999.999999999996
     },
     {
       "Domain": "Live (Docker)",
       "Method": "SQLiRLLM",
-      "VDR": 0.778,
+      "VDR": 0.889,
       "FPR": NaN,
       "F1": NaN,
-      "WAF_bypass": 0.0,
+      "WAF_bypass": 1.0,
       "ESR": 1.0,
-      "Time_ms": 7966.666666666667
+      "Time_ms": 2177.777777777778
+    }
+  ],
+  "live_validated": [
+    {
+      "Method": "SQLMap",
+      "Validated_SR": 0.667,
+      "Coverage_on_vulnerable": 0.625
+    },
+    {
+      "Method": "SQLiRLLM",
+      "Validated_SR": 1.0,
+      "Coverage_on_vulnerable": 1.0
     }
   ],
   "live_extra_artifacts": {

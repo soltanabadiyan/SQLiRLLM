@@ -41,6 +41,7 @@ class LiveTarget:
     extra_flags: List[str] = field(default_factory=list)
     has_waf: bool = False
     platform: str = ""
+    expected_vulnerable: bool = True
 
     def sqlmap_args(
         self,
@@ -81,7 +82,7 @@ class LiveTarget:
 TARGETS: Dict[str, LiveTarget] = {
     "dvwa_sqli": LiveTarget(
         name="dvwa_sqli",
-        url="http://localhost:8090/vulnerabilities/sqli/?id=1&Submit=Submit",
+        url="http://127.0.0.1:8090/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=low",
         parameter="id",
@@ -90,7 +91,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "dvwa_sqli_medium": LiveTarget(
         name="dvwa_sqli_medium",
-        url="http://localhost:8090/vulnerabilities/sqli/",
+        url="http://127.0.0.1:8090/vulnerabilities/sqli/",
         data="id=1&Submit=Submit",
         cookie="PHPSESSID=placeholder; security=medium",
         parameter="id",
@@ -99,7 +100,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "dvwa_sqli_hard": LiveTarget(
         name="dvwa_sqli_hard",
-        url="http://localhost:8095/vulnerabilities/sqli/?id=1&Submit=Submit",
+        url="http://127.0.0.1:8095/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=high",
         parameter="id",
@@ -108,16 +109,17 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "dvwa_sqli_max": LiveTarget(
         name="dvwa_sqli_max",
-        url="http://localhost:8096/vulnerabilities/sqli/?id=1&Submit=Submit",
+        url="http://127.0.0.1:8096/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=impossible",
         parameter="id",
         platform="DVWA (max/impossible)",
+        expected_vulnerable=False,
         extra_flags=["--dbms=mysql"],
     ),
     "dvwa_waf": LiveTarget(
         name="dvwa_waf",
-        url="http://localhost:8080/vulnerabilities/sqli/?id=1&Submit=Submit",
+        url="http://127.0.0.1:8080/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=low",
         parameter="id",
@@ -127,7 +129,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "sqli_labs_1": LiveTarget(
         name="sqli_labs_1",
-        url="http://localhost:8094/Less-1/?id=1",
+        url="http://127.0.0.1:8094/Less-1/?id=1",
         data=None,
         cookie=None,
         parameter="id",
@@ -136,7 +138,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "sqli_labs_11": LiveTarget(
         name="sqli_labs_11",
-        url="http://localhost:8094/Less-11/",
+        url="http://127.0.0.1:8094/Less-11/",
         data="uname=admin&passwd=admin&submit=Submit",
         cookie=None,
         parameter="uname",
@@ -145,7 +147,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "bwapp_sqli": LiveTarget(
         name="bwapp_sqli",
-        url="http://localhost:8091/sqli_1.php?title=iron+man&action=search",
+        url="http://127.0.0.1:8091/sqli_1.php?title=iron+man&action=search",
         data=None,
         cookie="PHPSESSID=placeholder; security_level=0",
         parameter="title",
@@ -154,7 +156,7 @@ TARGETS: Dict[str, LiveTarget] = {
     ),
     "juiceshop_login": LiveTarget(
         name="juiceshop_login",
-        url="http://localhost:8092/rest/user/login",
+        url="http://127.0.0.1:8092/rest/user/login",
         data='{"email":"test@test.com","password":"test"}',
         cookie=None,
         parameter="email",
@@ -198,7 +200,7 @@ def _prepare_sqli_labs() -> None:
     """Initialize/reset sqli-labs database so direct targets are reachable."""
     try:
         subprocess.run(
-            ["curl", "-s", "http://localhost:8094/sql-connections/setup-db.php"],
+            ["curl", "-s", "http://127.0.0.1:8094/sql-connections/setup-db.php"],
             capture_output=True, text=True, timeout=30,
         )
     except Exception:
@@ -209,7 +211,7 @@ def _prepare_bwapp() -> None:
     """Ensure bWAPP installation has been executed."""
     try:
         subprocess.run(
-            ["curl", "-s", "http://localhost:8091/install.php?install=yes"],
+            ["curl", "-s", "http://127.0.0.1:8091/install.php?install=yes"],
             capture_output=True, text=True, timeout=30,
         )
     except Exception:
@@ -223,7 +225,7 @@ def _get_bwapp_session(level: int = 0) -> Optional[str]:
             [
                 "curl", "-s", "-c", "-", "-b", "",
                 "-d", f"login=bee&password=bug&security_level={level}&form=submit",
-                "http://localhost:8091/login.php",
+                "http://127.0.0.1:8091/login.php",
             ],
             capture_output=True, text=True, timeout=15,
         )
@@ -251,6 +253,7 @@ class SQLMapResult:
     duration_s: float
     returncode: int
     request_count_estimate: Optional[int] = None
+    expected_vulnerable: bool = True
     error: Optional[str] = None
 
 
@@ -309,12 +312,12 @@ def run_sqlmap(
     except subprocess.TimeoutExpired:
         return SQLMapResult(
             target.name, target.platform, target.has_waf, False, [], None, 0,
-            timeout_s, -1, error="timeout",
+            timeout_s, -1, expected_vulnerable=target.expected_vulnerable, error="timeout",
         )
     except Exception as exc:
         return SQLMapResult(
             target.name, target.platform, target.has_waf, False, [], None, 0,
-            0.0, -1, error=str(exc),
+            0.0, -1, expected_vulnerable=target.expected_vulnerable, error=str(exc),
         )
 
     # Parse key indicators from sqlmap stdout.
@@ -355,6 +358,7 @@ def run_sqlmap(
         duration_s=round(duration, 1),
         returncode=proc.returncode,
         request_count_estimate=req_count,
+        expected_vulnerable=target.expected_vulnerable,
     )
 
 
@@ -405,6 +409,7 @@ def run(
             "tables_found": r.tables_found,
             "duration_s": r.duration_s,
             "request_count_estimate": r.request_count_estimate,
+            "expected_vulnerable": r.expected_vulnerable,
             "error": r.error,
         }
         results.append(d)

@@ -62,6 +62,7 @@ def load_sqlmap(path: Path) -> pd.DataFrame:
             "Domain": "Live: " + r.get("platform", "?"),
             "Target": r.get("target"),
             "Vulnerable_detected": r.get("vulnerable_detected", False),
+            "Expected_vulnerable": r.get("expected_vulnerable", True),
             "Has_WAF": r.get("has_waf", False),
             "Injection_types": len(r.get("injection_types", [])),
             "Injection_type_names": r.get("injection_types", []),
@@ -87,6 +88,7 @@ def load_sqlirllm(path: Path) -> pd.DataFrame:
             "Domain": "Live: " + r.get("platform", "?"),
             "Target": r.get("target"),
             "Vulnerable_detected": succ > 0,
+            "Expected_vulnerable": r.get("expected_vulnerable", True),
             "Has_WAF": r.get("has_waf", False),
             "Strategies_tried": tried,
             "Strategies_succeeded": succ,
@@ -400,16 +402,23 @@ def run(live: bool = True) -> None:
     sim_out.insert(0, "Domain", "Simulation")
 
     master = sim_out.copy()
+    live_validated = []
 
     # Append live summary rows.
     for df_tool, tool_name in [(sqlmap_live, "SQLMap"), (sqli_live, "SQLiRLLM")]:
         if df_tool.empty:
             continue
         det = df_tool.get("Vulnerable_detected", pd.Series(dtype=bool))
+        expected = df_tool.get("Expected_vulnerable", pd.Series([True] * len(df_tool))).astype(bool)
         n_total = len(df_tool)
         n_det = det.sum() if len(det) else 0
         waf_rows = df_tool[df_tool.get("Has_WAF", pd.Series([False] * len(df_tool)))]
         waf_det = waf_rows.get("Vulnerable_detected", pd.Series(dtype=bool)).sum() if len(waf_rows) else 0
+        live_validated.append({
+            "Method": tool_name,
+            "Validated_SR": round(float((det.astype(bool) == expected).mean()), 3) if n_total else None,
+            "Coverage_on_vulnerable": round(float(det[expected].mean()), 3) if expected.any() else None,
+        })
         row = pd.DataFrame([{
             "Domain": "Live (Docker)", "Method": tool_name,
             "VDR": round(n_det / n_total, 3) if n_total else None,
@@ -426,6 +435,7 @@ def run(live: bool = True) -> None:
         "simulation": sim.to_dict(orient="records"),
         "live_targets_tested": len(out_rows) // 2 if out_rows else 0,
         "cross_comparison": master.to_dict(orient="records"),
+        "live_validated": live_validated,
         "live_extra_artifacts": {
             "vuln_type_counts_csv": str((OUT / "live_vuln_type_counts.csv").relative_to(BASE)),
             "vuln_type_counts_png": str((OUT / "live_vuln_type_by_lab.png").relative_to(BASE)),
