@@ -785,6 +785,62 @@
 	<p class="western" style="margin-left: 0in; margin-top: 0.04in"><br/>
 
 	</p>
+	<ol type="I" start="4">
+		<li><p align="left" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">RESULTS</font></font></p></li>
+	</ol>
+	<p class="western" align="left" style="line-height: 110%; margin-right: 0.2in">
+	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">We evaluated SQLiRLLM in both simulation and live Docker-based benchmark environments. The final live run used seven targets (DVWA low/medium, DVWA+WAF, sqli-labs Less-1/Less-11, bWAPP, and Juice Shop) with strict no-cache LLM verification enabled (85 API calls, 0 cache hits, 0 offline fallbacks). SQLiRLLM detected vulnerabilities in 3/7 targets (0.4286), while SQLMap detected 0/7 within the same time-constrained setup. On the protected DVWA+ModSecurity target, WAF bypass remained 0.0 in this run, highlighting an active robustness gap under strict CRS rules.</font></font></p>
+	<p class="western" align="center" style="line-height: 100%; margin-top: 0.08in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">TABLE II</font></font></p>
+	<p class="western" align="center" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">SIMULATION PERFORMANCE SUMMARY</font></font></p>
+	<table border="1" cellspacing="0" cellpadding="3" style="border-collapse: collapse; width: 100%; font-size: 8pt; margin-top: 0.04in; margin-bottom: 0.08in">
+		<tr>
+			<th align="left">Method</th>
+			<th align="center">VDR</th>
+			<th align="center">FPR</th>
+			<th align="center">F1</th>
+			<th align="center">WAF Bypass</th>
+			<th align="center">ESR</th>
+			<th align="center">Time (ms)</th>
+		</tr>
+		<tr><td>Static</td><td align="center">0.1453</td><td align="center">0.0000</td><td align="center">0.2537</td><td align="center">0.3333</td><td align="center">1.0000</td><td align="center">71.3</td></tr>
+		<tr><td>Random</td><td align="center">0.1453</td><td align="center">0.0000</td><td align="center">0.2537</td><td align="center">0.3333</td><td align="center">1.0000</td><td align="center">71.0</td></tr>
+		<tr><td>RL-only</td><td align="center">0.1453</td><td align="center">0.0000</td><td align="center">0.2537</td><td align="center">0.3333</td><td align="center">1.0000</td><td align="center">71.8</td></tr>
+		<tr><td>LLM-only</td><td align="center">0.4188</td><td align="center">0.0864</td><td align="center">0.5241</td><td align="center">0.6202</td><td align="center">1.0000</td><td align="center">77.7</td></tr>
+		<tr><td><b>SQLiRLLM</b></td><td align="center"><b>0.4615</b></td><td align="center">0.0905</td><td align="center"><b>0.5596</b></td><td align="center"><b>0.6240</b></td><td align="center">1.0000</td><td align="center">77.7</td></tr>
+	</table>
+	<p class="western" align="center" style="margin-top: 0.03in"><img src="../results/live/sim_comparison.png" name="Image Sim Comparison" align="bottom" width="520" border="0"/></p>
+	<p class="western" align="left" style="line-height: 100%; margin-right: 0.2in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">Fig.2 Simulation comparison of VDR, F1, WAF bypass, and runtime across baseline policies and SQLiRLLM.</font></font></p>
+	<p class="western" align="center" style="line-height: 100%; margin-top: 0.08in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">TABLE III</font></font></p>
+	<p class="western" align="center" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">LIVE BENCHMARK RESULTS (7 TARGETS)</font></font></p>
+	<table border="1" cellspacing="0" cellpadding="3" style="border-collapse: collapse; width: 100%; font-size: 8pt; margin-top: 0.04in; margin-bottom: 0.08in">
+		<tr>
+			<th align="left">Target</th>
+			<th align="left">Platform</th>
+			<th align="center">WAF</th>
+			<th align="center">SQLMap</th>
+			<th align="center">SQLiRLLM</th>
+		</tr>
+		<tr><td>dvwa_sqli</td><td>DVWA</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+		<tr><td>dvwa_sqli_medium</td><td>DVWA (medium)</td><td align="center">No</td><td align="center">No</td><td align="center">No</td></tr>
+		<tr><td>dvwa_waf</td><td>DVWA+ModSecurity</td><td align="center">Yes</td><td align="center">No</td><td align="center">No</td></tr>
+		<tr><td>sqli_labs_1</td><td>sqli-labs Less-1</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+		<tr><td>sqli_labs_11</td><td>sqli-labs Less-11</td><td align="center">No</td><td align="center">No</td><td align="center">No</td></tr>
+		<tr><td>bwapp_sqli</td><td>bWAPP</td><td align="center">No</td><td align="center">No</td><td align="center">No</td></tr>
+		<tr><td>juiceshop_login</td><td>Juice Shop</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+	</table>
+	<p class="western" align="left" style="line-height: 110%; margin-right: 0.2in">
+	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">The live evidence indicates that adaptive generation is beneficial for heterogeneous stacks (notably Less-1 and Juice Shop), but the current polymorphic transformations alone are insufficient against the deployed ModSecurity rule set. This explains the observed gap between high simulated WAF bypass and conservative live WAF bypass on hardened targets.</font></font></p>
+	<p class="western" align="center" style="margin-top: 0.03in"><img src="../results/live/live_waf_mechanism.png" name="Image WAF Mechanism" align="bottom" width="500" border="0"/></p>
+	<p class="western" align="left" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">Fig.3 WAF event distribution and mechanism-level outcomes in live evaluation.</font></font></p>
+	<p class="western" align="center" style="margin-top: 0.03in"><img src="../results/live/live_requests_per_lab_mechanism.png" name="Image Requests Per Lab" align="bottom" width="500" border="0"/></p>
+	<p class="western" align="left" style="line-height: 100%; margin-bottom: 0.08in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">Fig.4 Requests-to-detection profile per lab and mechanism. This figure (image) emphasizes the higher cost of difficult targets and supports the runtime analysis.</font></font></p>
+	<ol type="I" start="5">
+		<li><p align="left" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">CONCLUSION</font></font></p></li>
+	</ol>
+	<p class="western" align="left" style="line-height: 110%; margin-right: 0.2in">
+	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">This work presented SQLiRLLM, a multi-tier SQL injection assessment framework integrating Q-learning-based strategy selection, context-aware LLM payload generation, adaptive WAF-evasion post-processing, and ethical guardrails. Across simulation, SQLiRLLM achieved the strongest combined detection and bypass profile (VDR 0.4615, F1 0.5596, WAF bypass 0.6240), while live benchmarks confirmed practical detection on 3/7 diverse targets under strict uncached API execution. The framework therefore demonstrates meaningful progress toward practical, explainable, and policy-aware autonomous SQLi testing.</font></font></p>
+	<p class="western" align="left" style="line-height: 110%; margin-right: 0.2in">
+	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">The main limitation is robust bypass against hardened CRS-style WAF deployments, where live bypass remained 0.0 on DVWA+ModSecurity. Future work should incorporate CRS-aware mutation grammars, response-cluster-guided exploration, multi-attempt curriculum policies, and richer cross-target transfer learning. Even with this limitation, the presented architecture offers a reproducible foundation for extending adaptive offensive testing while maintaining explicit ethical constraints and auditable decision paths.</font></font></p>
 	<p class="western" align="left"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt"><span style="letter-spacing: -0.1pt">REFERENCES</span></font></font></p>
 	<ol>
 		<li><p align="left" style="line-height: 98%; margin-right: 0.41in; margin-top: 0.06in">
