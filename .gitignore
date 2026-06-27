@@ -12,3 +12,6 @@ venv/
 # Experiment artifacts
 results/cache/
 *.log
+results/live/sqlmap_*/
+results/live/sqlmap_targeted/
+results/live/toolbox/

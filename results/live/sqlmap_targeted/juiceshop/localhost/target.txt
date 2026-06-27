@@ -1,1 +1,0 @@
-http://localhost:8092/rest/products/search?q=test (GET)  # /usr/bin/sqlmap -u http://localhost:8092/rest/products/search?q=test --dbms=sqlite --level=3 --risk=2 --batch --timeout=30 -p q --output-dir=results/live/sqlmap_targeted/juiceshop

@@ -1,3 +1,0 @@
-http://localhost:8094/Less-11/ (POST)  # /usr/bin/sqlmap -u http://localhost:8094/Less-11/ --data=uname=admin&passwd=admin&submit=Submit --dbms=mysql --level=3 --risk=2 --batch --timeout=30 --retries=1 -p uname --output-dir=results/live/sqlmap_targeted/less11
-
-uname=admin&passwd=admin&submit=Submit

