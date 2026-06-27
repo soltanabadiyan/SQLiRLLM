@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResearchPaper schema="academic-paper/1.0" machineReadable="true">
+
+  <Metadata>
+    <Title>SQLiRLLM: A Multi-Tier AI Framework for Adaptive SQL Injection Testing with Ethical Constraints</Title>
+    <DocumentType>Design / Proposal Paper</DocumentType>
+    <PageCount>4</PageCount>
+    <SourceFile>-6947347350199591168_693147796446359.pdf</SourceFile>
+    <Domain>Cybersecurity / Web Application Security / Machine Learning</Domain>
+    <Note>Document contains architecture, methodology, dataset size, model choices, reward equation, and a qualitative comparison table. It does NOT contain detailed experiments, numeric evaluation results, or a separate results section.</Note>
+  </Metadata>
+
+  <Abstract sourcePage="1">
+    <Summary>Proposes a three-tier AI-assisted SQL injection testing framework combining reinforcement learning and large language models, with embedded ethical constraints.</Summary>
+    <CoreComponents>
+      <Component tier="1" role="Strategy Selection" model="Q-Learning"/>
+      <Component tier="2" role="Payload Generation" model="Phi-3 Mini"/>
+      <Component tier="3" role="Post-Execution Analysis" model="Qwen2.5-Coder-14B"/>
+    </CoreComponents>
+    <Objective>Improve adaptability over static tools while keeping resource use practical and adding ethical constraints.</Objective>
+  </Abstract>
+
+  <Introduction sourcePage="1">
+    <Statement>SQL injection remains a major vulnerability in modern web applications.</Statement>
+    <ExistingTools>
+      <Tool name="SQLMap" type="static, signature-based heuristics"/>
+      <Tool name="Commercial scanners" type="static, signature-based heuristics"/>
+    </ExistingTools>
+    <ClaimedLimitations>
+      <Limitation>Poor adaptation to application-specific logic</Limitation>
+      <Limitation>Weak semantic awareness</Limitation>
+      <Limitation>Susceptibility to Web Application Firewalls (WAFs)</Limitation>
+    </ClaimedLimitations>
+    <Motivation>Motivates learning-based approaches such as SSQLi, XPLOITSQL, and EPPTA.</Motivation>
+  </Introduction>
+
+  <ProblemStatement sourcePage="1">
+    <Challenge id="efficiency-dilemma">Large models are computationally expensive; lighter RL approaches lack semantic depth.</Challenge>
+    <Challenge id="missing-ethics">Ethical guardrails are missing in many prior RL systems.</Challenge>
+    <Challenge id="single-tier">Single-tier designs do not combine complementary AI paradigms well.</Challenge>
+  </ProblemStatement>
+
+  <Contributions sourcePage="2">
+    <Contribution>Multi-tier architecture dedicating specialized AI paradigms to distinct subtasks.</Contribution>
+    <Contribution>Scalable computational efficiency by using models of different sizes per tier.</Contribution>
+    <Contribution>Semantic depth achieved via PEFT/LoRA fine-tuning.</Contribution>
+    <Contribution>Ethical constraints embedded directly in the RL reward structure.</Contribution>
+  </Contributions>
+
+  <RelatedWork sourcePage="2">
+    <Category name="Traditional SQLi Testing">
+      <Reference tool="SQLMap" strength="broad payload coverage" weakness="static and non-adaptive"/>
+      <Reference tool="Burp Suite Professional" strength="strong scanning, session handling" weakness="rule-driven"/>
+      <Reference tool="Acunetix" strength="strong scanning" weakness="rule-driven"/>
+      <Note>Static methods struggle with sanitization and modern context-aware behavior.</Note>
+    </Category>
+    <Category name="Reinforcement Learning in Cybersecurity">
+      <Reference algorithm="PPO" note="common RL choice"/>
+      <Reference algorithm="SAC" note="common RL choice"/>
+      <Reference tool="EPPTA" basis="PPO" strength="faster convergence" weakness="not SQLi-specific, lacks LLM semantics"/>
+      <Reference tool="SSQLi" basis="SAC" detail="dual-vector state, 14 stackable vectors" result="97.39% bypass against modern WAFs"/>
+    </Category>
+    <Category name="LLMs for Security">
+      <Note>LLMs are powerful but computationally costly.</Note>
+      <Reference technique="LoRA" type="PEFT" benefit="reduces trainable parameters by up to 99%"/>
+      <Reference tool="XPLOITSQL" model="T5 (77M parameters)" approach="LLM + RL" strength="strong bypass performance" weakness="high compute cost, no ethical parameters"/>
+    </Category>
+    <ResearchGap>
+      <Description>Existing frameworks do not jointly achieve all of the following:</Description>
+      <Requirement>Computational efficiency</Requirement>
+      <Requirement>Semantic sophistication</Requirement>
+      <Requirement>Ethical compliance</Requirement>
+      <Requirement>Practical deployability</Requirement>
+    </ResearchGap>
+  </RelatedWork>
+
+  <Methodology sourcePage="3">
+    <DesignGoal>Balance semantic analysis and resource constraints while enforcing ethical safeguards.</DesignGoal>
+
+    <Workflow>
+      <Step order="1" name="Target Definition and Scoping">Operator defines the authorized testing boundary.</Step>
+      <Step order="2" name="Hyperparameter Calibration">Sets RL exploration/exploitation balance and LLM temperature.</Step>
+      <Step order="3" name="Strategic Planning Layer">Q-Learning chooses high-level attack vectors.</Step>
+    </Workflow>
+
+    <Architecture figureRef="Figure 1" sourcePage="3">
+      <Layer name="Strategic Planning"/>
+      <Layer name="Payload Generation" feature="ethical enforcement"/>
+      <Layer name="Analysis Feedback Loop"/>
+    </Architecture>
+
+    <ComparisonTable id="Table I" sourcePage="3">
+      <Row framework="SQLMap" rl="None" languageModel="None" ethics="Partial" payloads="Comprehensive" nature="Static"/>
+      <Row framework="SSQLi" rl="SAC" languageModel="None" ethics="None" evasion="97.39%" semantics="None"/>
+      <Row framework="XPLOITSQL" rl="Actor-Critic" languageModel="T5" ethics="None" approach="LLM+RL" cost="High"/>
+      <Row framework="SQLiRLLM" rl="Q-Learning" languageModel="Multi-model" ethics="Yes" nature="Multi-tier, Ethical"/>
+    </ComparisonTable>
+
+    <Tier id="1" name="Strategic Planning Layer" sourcePage="3-4">
+      <Algorithm>Tabular Q-Learning</Algorithm>
+      <Rationale>Interpretability, low computational overhead, convergence in structured SQL settings.</Rationale>
+      <StateSpace sourcePage="4">
+        <Dimension name="Framework Type" values="Laravel, Django, etc."/>
+        <Dimension name="Database System" values="MySQL, Oracle"/>
+        <Dimension name="WAF Presence" values="present, absent"/>
+        <Dimension name="Testing Phase" values="Initial, Refinement, Exploitation, Verification"/>
+      </StateSpace>
+      <ActionSpace sourcePage="4">
+        <Action>UNION-based</Action>
+        <Action>Error-based</Action>
+        <Action>Boolean-based blind</Action>
+        <Action>Time-based blind</Action>
+        <Action>Stacked queries</Action>
+        <Action>Second-order injection</Action>
+      </ActionSpace>
+    </Tier>
+
+    <Tier id="2" name="Payload Generation Layer" sourcePage="4">
+      <Model name="Phi-3 Mini" parameters="3.8B"/>
+      <FineTuning method="LoRA">
+        <TunedParameters percentage="~0.5%" count="~19M"/>
+        <TrainingTime>~8 hours on a single GPU</TrainingTime>
+      </FineTuning>
+      <TrainingDataset>
+        <Size>60,000 labeled SQLi examples</Size>
+        <Source>SSQLi</Source>
+        <Source>XPLOITSQL</Source>
+        <Augmentation>Custom payloads for modern frameworks</Augmentation>
+      </TrainingDataset>
+      <PromptEngineering>Incorporates target syntax and WAF presence.</PromptEngineering>
+    </Tier>
+
+    <Tier id="3" name="Analysis and Reward Layer" sourcePage="4">
+      <Model name="Qwen2.5-Coder-14B" usage="selective batch analysis"/>
+      <RewardFunction>
+        <Equation>R(s, a, s') = α·VDR(a) + β·ESR(a) − γ·FPR(a) − δ·Time(a)</Equation>
+        <Parameter symbol="α" value="0.6" meaning="weight for Vulnerability Detection Rate"/>
+        <Parameter symbol="β" value="0.3" meaning="weight for Ethical Safeguard Rating"/>
+        <Parameter symbol="γ" value="0.1" meaning="weight for False Positive Rate"/>
+        <Parameter symbol="δ" value="0.05" meaning="weight for Time cost"/>
+        <Metric abbr="VDR" name="Vulnerability Detection Rate"/>
+        <Metric abbr="ESR" name="Ethical Safeguard Rating"/>
+        <Metric abbr="FPR" name="False Positive Rate"/>
+        <EthicalViolationPenalty value="-100"/>
+      </RewardFunction>
+      <FeedbackLoop>Updates the Q-table until convergence.</FeedbackLoop>
+    </Tier>
+  </Methodology>
+
+  <References sourcePage="4">
+    <Reference key="SQLMap"/>
+    <Reference key="SSQLi"/>
+    <Reference key="XPLOITSQL"/>
+    <Reference key="EPPTA"/>
+    <Reference key="RL-fundamentals"/>
+    <Reference key="LoRA"/>
+  </References>
+
+</ResearchPaper>

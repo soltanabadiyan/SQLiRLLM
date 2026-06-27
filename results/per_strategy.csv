@@ -1,0 +1,7 @@
+strategy,sqlirllm_rate,static_rate
+union_based,0.033,0.033
+error_based,0.3,0.183
+boolean_blind,0.0,0.0
+time_blind,0.25,0.067
+stacked_queries,0.2,0.0
+second_order,0.117,0.0

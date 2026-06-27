@@ -1,0 +1,142 @@
+# SQLiRLLM — Vulnerable-Application Test Stack
+# Four platforms + a ModSecurity WAF reverse proxy to test WAF-bypass behaviour.
+#
+# USAGE:
+#   docker compose up -d          # start all services
+#   docker compose ps             # check readiness
+#   docker compose down -v        # clean up
+#
+# URLs after startup:
+#   DVWA           http://localhost:8090       (admin / password)
+#   bWAPP          http://localhost:8091/install.php  (then bee / bug)
+#   OWASP Juice    http://localhost:8092
+#   WebGoat        http://localhost:8093/WebGoat
+#   SQLi-labs      http://localhost:8094
+#   DVWA via WAF   http://localhost:8080       (ModSecurity in front of DVWA)
+
+services:
+
+  # ── Toolbox (sqlmap + helper CLI tools) ───────────────────────────────────
+  toolbox:
+    build:
+      context: ..
+      dockerfile: docker/toolbox/Dockerfile
+    container_name: sqli_toolbox
+    restart: unless-stopped
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+    command: ["sleep", "infinity"]
+    networks:
+      - sqlilab
+
+  # ── DVWA (Damn Vulnerable Web Application) ─────────────────────────────────
+  dvwa:
+    image: ghcr.io/digininja/dvwa:latest
+    container_name: sqli_dvwa
+    restart: unless-stopped
+    environment:
+      DB_SERVER: dvwa-db
+      DB_DATABASE: dvwa
+      DB_USER: dvwa
+      DB_PASSWORD: p@ssw0rd
+      DB_PORT: 3306
+    depends_on:
+      dvwa-db:
+        condition: service_healthy
+    ports:
+      - "8090:80"
+    networks:
+      - sqlilab
+
+  dvwa-db:
+    image: mysql:8.0
+    container_name: sqli_dvwa_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: dvwa
+      MYSQL_USER: dvwa
+      MYSQL_PASSWORD: p@ssw0rd
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - dvwa_db_data:/var/lib/mysql
+    networks:
+      - sqlilab
+
+  # ── bWAPP (Buggy Web Application) ──────────────────────────────────────────
+  bwapp:
+    image: raesene/bwapp:latest
+    container_name: sqli_bwapp
+    restart: unless-stopped
+    ports:
+      - "8091:80"
+    networks:
+      - sqlilab
+
+  # ── OWASP Juice Shop ───────────────────────────────────────────────────────
+  juiceshop:
+    image: bkimminich/juice-shop:latest
+    container_name: sqli_juiceshop
+    restart: unless-stopped
+    ports:
+      - "8092:3000"
+    networks:
+      - sqlilab
+
+  # ── WebGoat ────────────────────────────────────────────────────────────────
+  webgoat:
+    image: webgoat/webgoat:v2023.8
+    container_name: sqli_webgoat
+    restart: unless-stopped
+    environment:
+      WEBWOLF_HOST: webwolf
+      WEBWOLF_PORT: "9090"
+    ports:
+      - "8093:8080"
+    networks:
+      - sqlilab
+
+  # ── sqli-labs (classic MySQL labs) ─────────────────────────────────────────
+  sqli-labs:
+    image: acgpiano/sqli-labs:latest
+    container_name: sqli_labs
+    restart: unless-stopped
+    ports:
+      - "8094:80"
+    networks:
+      - sqlilab
+
+  # ── ModSecurity WAF (reverse proxy in front of DVWA) ───────────────────────
+  waf:
+    image: owasp/modsecurity-crs:nginx-alpine
+    container_name: sqli_waf
+    restart: unless-stopped
+    environment:
+      BACKEND: "http://dvwa:80"
+      BACKEND_WS: "ws://dvwa:80"
+      PORT: "8080"
+      PARANOIA: 2
+      ANOMALY_INBOUND: 5
+      ANOMALY_OUTBOUND: 4
+      ALLOWED_METHODS: "GET POST HEAD OPTIONS"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dvwa
+    networks:
+      - sqlilab
+
+networks:
+  sqlilab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  dvwa_db_data:

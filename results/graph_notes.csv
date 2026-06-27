@@ -1,0 +1,9 @@
+figure,primary_signal,better_direction
+convergence.png,reward trajectory,higher and stable
+comparison_quality.png,multi-metric quality,higher except FPR
+quality_heatmap.png,method x metric matrix,brighter better (FPR uses 1-FPR for color)
+pareto_vdr_fpr.png,VDR/FPR frontier,top-left region
+delta_vs_static.png,improvement over static,positive values
+composite_score.png,direction-aware rank,higher
+budget.png,detection under request constraints,higher at lower budget
+per_strategy.png,technique success profile,higher

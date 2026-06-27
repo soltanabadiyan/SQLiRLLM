@@ -1,0 +1,275 @@
+{
+  "config": {
+    "episodes": 800,
+    "n_targets": 60,
+    "seed": 42,
+    "llm_configured": true,
+    "payload_model": "gapgpt-qwen-3.6",
+    "analysis_model": "qwen3-235b-a22b-instruct-2507",
+    "reward_weights": {
+      "alpha": 0.6,
+      "beta": 0.3,
+      "gamma": 0.1,
+      "delta": 0.05,
+      "ethical_violation_penalty": -100.0
+    }
+  },
+  "quality": {
+    "Static": {
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "Precision": 1.0,
+      "F1": 0.2537,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.3333,
+      "mean_time_ms": 71.3,
+      "mean_reward": 0.3266,
+      "actions": 360
+    },
+    "Random": {
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "Precision": 1.0,
+      "F1": 0.2537,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.3333,
+      "mean_time_ms": 71.0,
+      "mean_reward": 0.3266,
+      "actions": 360
+    },
+    "RL-only": {
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "Precision": 1.0,
+      "F1": 0.2537,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.3333,
+      "mean_time_ms": 71.8,
+      "mean_reward": 0.3266,
+      "actions": 360
+    },
+    "LLM-only": {
+      "VDR": 0.4188,
+      "FPR": 0.0864,
+      "Precision": 0.7,
+      "F1": 0.5241,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.6202,
+      "mean_time_ms": 77.7,
+      "mean_reward": 0.3741,
+      "actions": 360
+    },
+    "SQLiRLLM": {
+      "VDR": 0.4615,
+      "FPR": 0.0905,
+      "Precision": 0.7105,
+      "F1": 0.5596,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.624,
+      "mean_time_ms": 77.7,
+      "mean_reward": 0.3822,
+      "actions": 360
+    }
+  },
+  "table1": [
+    {
+      "Method": "Static",
+      "RL": "No",
+      "LM": "No",
+      "Ethical": "No",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.3
+    },
+    {
+      "Method": "Random",
+      "RL": "No",
+      "LM": "No",
+      "Ethical": "No",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.0
+    },
+    {
+      "Method": "RL-only",
+      "RL": "Q-L",
+      "LM": "No",
+      "Ethical": "No",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.8
+    },
+    {
+      "Method": "LLM-only",
+      "RL": "No",
+      "LM": "LLM",
+      "Ethical": "No",
+      "VDR": 0.4188,
+      "FPR": 0.0864,
+      "F1": 0.5241,
+      "WAF_bypass": 0.6202,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    },
+    {
+      "Method": "SQLiRLLM",
+      "RL": "Q-L",
+      "LM": "Multi",
+      "Ethical": "Yes",
+      "VDR": 0.4615,
+      "FPR": 0.0905,
+      "F1": 0.5596,
+      "WAF_bypass": 0.624,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    },
+    {
+      "Method": "SQLMap [13]",
+      "RL": "No",
+      "LM": "No",
+      "Ethical": "Partial",
+      "VDR": "\u2014",
+      "FPR": "\u2014",
+      "F1": "\u2014",
+      "WAF_bypass": "\u2014",
+      "ESR": "\u2014",
+      "Time_ms": "\u2014"
+    },
+    {
+      "Method": "SSQLi [3]",
+      "RL": "SAC",
+      "LM": "No",
+      "Ethical": "No",
+      "VDR": "\u2014",
+      "FPR": "\u2014",
+      "F1": "\u2014",
+      "WAF_bypass": 0.9739,
+      "ESR": "\u2014",
+      "Time_ms": "\u2014"
+    },
+    {
+      "Method": "XPLOITSQL [4]",
+      "RL": "AC",
+      "LM": "T5",
+      "Ethical": "No",
+      "VDR": "\u2014",
+      "FPR": "\u2014",
+      "F1": "\u2014",
+      "WAF_bypass": "\u2014",
+      "ESR": "\u2014",
+      "Time_ms": "\u2014"
+    }
+  ],
+  "budget": {
+    "budgets": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "Random": [
+      0.083,
+      0.133,
+      0.167,
+      0.2,
+      0.183,
+      0.217
+    ],
+    "RL-only": [
+      0.167,
+      0.183,
+      0.183,
+      0.183,
+      0.217,
+      0.217
+    ],
+    "SQLiRLLM": [
+      0.3,
+      0.283,
+      0.4,
+      0.467,
+      0.583,
+      0.617
+    ]
+  },
+  "per_strategy": [
+    {
+      "strategy": "union_based",
+      "sqlirllm_rate": 0.033,
+      "static_rate": 0.033
+    },
+    {
+      "strategy": "error_based",
+      "sqlirllm_rate": 0.3,
+      "static_rate": 0.183
+    },
+    {
+      "strategy": "boolean_blind",
+      "sqlirllm_rate": 0.0,
+      "static_rate": 0.0
+    },
+    {
+      "strategy": "time_blind",
+      "sqlirllm_rate": 0.25,
+      "static_rate": 0.067
+    },
+    {
+      "strategy": "stacked_queries",
+      "sqlirllm_rate": 0.2,
+      "static_rate": 0.0
+    },
+    {
+      "strategy": "second_order",
+      "sqlirllm_rate": 0.117,
+      "static_rate": 0.0
+    }
+  ],
+  "ethics": [
+    {
+      "method": "SQLiRLLM (ethics on)",
+      "authorized_targets": 30,
+      "total_targets": 60,
+      "actions": 360,
+      "violations_caught": 180,
+      "ESR": 0.5
+    },
+    {
+      "method": "LLM-only (no ethics)",
+      "authorized_targets": 30,
+      "total_targets": 60,
+      "actions": 360,
+      "violations_caught": 0,
+      "ESR": 0.5
+    }
+  ],
+  "llm_usage": {
+    "payload_offline_fallbacks": 0,
+    "analyzer_llm_calls": 4981,
+    "analyzer_heuristic_calls": 0,
+    "api_calls": 0,
+    "cache_hits": 9962,
+    "final_epsilon": 0.05,
+    "q_states_learned": 97
+  },
+  "figure_guide": {
+    "comparison_quality.png": "Grouped bars over core metrics. Better: VDR/F1/Precision/WAF/ESR up, FPR down.",
+    "quality_heatmap.png": "Method x metric matrix with raw values. FPR color uses 1-FPR so brighter is better.",
+    "pareto_vdr_fpr.png": "Tradeoff map: ideal region is top-left (high VDR, low FPR). Bubble size favors lower time.",
+    "delta_vs_static.png": "Improvements versus static baseline. Positive bars indicate better-than-static.",
+    "composite_score.png": "Direction-aware normalized ranking score. Higher composite is better.",
+    "budget.png": "Detection under constrained requests. Curves closer to 1 with fewer requests are better.",
+    "per_strategy.png": "Technique-specific success rates; higher bars indicate stronger exploitation capability.",
+    "convergence.png": "Training reward trend; stable upward behavior indicates policy learning convergence."
+  }
+}

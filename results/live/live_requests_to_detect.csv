@@ -1,0 +1,8 @@
+Tool,Lab,Target,Requests_to_detection,Detected
+SQLMap,sqli-labs,sqli_labs_1,,False
+SQLMap,Juice Shop,juiceshop_login,,False
+SQLiRLLM,DVWA,dvwa_sqli,3.0,True
+SQLiRLLM,DVWA+ModSecurity,dvwa_waf,12.0,False
+SQLiRLLM,sqli-labs Less-1,sqli_labs_1,2.0,True
+SQLiRLLM,bWAPP,bwapp_sqli,12.0,False
+SQLiRLLM,Juice Shop,juiceshop_login,1.0,True

@@ -1,0 +1,1 @@
+http://localhost:8094/Less-1/?id=1 (GET)  # /usr/bin/sqlmap -u http://localhost:8094/Less-1/?id=1 --level 5 --risk 3 --timeout 20 --retries 2 --batch --output-dir /home/morteza/Desktop/PHD/wafa/code/results/live/sqlmap_sqli_labs_1 --forms --crawl 1 --technique BEUSTQ --tamper space2comment,charencode --threads 3 --dbms=mysql

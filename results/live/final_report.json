@@ -1,0 +1,52 @@
+{
+  "generated_utc": "2026-06-27 16:36:44Z",
+  "run_config": {
+    "episodes": "800",
+    "targets_n": "60",
+    "seed": "42",
+    "skip_sim": "0",
+    "run_tools": "both",
+    "live_targets": "dvwa_sqli dvwa_waf sqli_labs_1 bwapp_sqli juiceshop_login",
+    "sqlirllm_strategies": "error_based,time_blind,union_based",
+    "sqlirllm_max_attempts": "4",
+    "sqlirllm_timeout_s": "15",
+    "sqlmap_level": "5",
+    "sqlmap_risk": "3",
+    "sqlmap_timeout_s": "90",
+    "sqlmap_request_timeout_s": "20",
+    "sqlmap_technique": "BEUSTQ",
+    "sqlmap_tamper": "space2comment,charencode",
+    "sqlmap_threads": "3"
+  },
+  "simulation": {
+    "SQLiRLLM": {
+      "VDR": 0.4615,
+      "FPR": 0.0905,
+      "Precision": 0.7105,
+      "F1": 0.5596,
+      "ESR": 1.0,
+      "WAF_bypass_rate": 0.624,
+      "mean_time_ms": 77.7,
+      "mean_reward": 0.3822,
+      "actions": 360
+    }
+  },
+  "live": {
+    "SQLMap": {
+      "detected": 0,
+      "total": 2,
+      "rate": 0.0
+    },
+    "SQLiRLLM": {
+      "detected": 3,
+      "total": 5,
+      "rate": 0.6
+    }
+  },
+  "artifacts": {
+    "summary": "results/summary.json",
+    "cross_csv": "results/live/cross_comparison.csv",
+    "cross_summary": "results/live/cross_summary.json",
+    "report_md": "results/live/final_report.md"
+  }
+}

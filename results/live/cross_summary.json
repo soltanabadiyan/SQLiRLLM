@@ -1,0 +1,135 @@
+{
+  "simulation": [
+    {
+      "Method": "Static",
+      "Domain": "Simulation",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.3
+    },
+    {
+      "Method": "Random",
+      "Domain": "Simulation",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.0
+    },
+    {
+      "Method": "RL-only",
+      "Domain": "Simulation",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.8
+    },
+    {
+      "Method": "LLM-only",
+      "Domain": "Simulation",
+      "VDR": 0.4188,
+      "FPR": 0.0864,
+      "F1": 0.5241,
+      "WAF_bypass": 0.6202,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    },
+    {
+      "Method": "SQLiRLLM",
+      "Domain": "Simulation",
+      "VDR": 0.4615,
+      "FPR": 0.0905,
+      "F1": 0.5596,
+      "WAF_bypass": 0.624,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    }
+  ],
+  "live_targets_tested": 3,
+  "cross_comparison": [
+    {
+      "Domain": "Simulation",
+      "Method": "Static",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.3
+    },
+    {
+      "Domain": "Simulation",
+      "Method": "Random",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.0
+    },
+    {
+      "Domain": "Simulation",
+      "Method": "RL-only",
+      "VDR": 0.1453,
+      "FPR": 0.0,
+      "F1": 0.2537,
+      "WAF_bypass": 0.3333,
+      "ESR": 1.0,
+      "Time_ms": 71.8
+    },
+    {
+      "Domain": "Simulation",
+      "Method": "LLM-only",
+      "VDR": 0.4188,
+      "FPR": 0.0864,
+      "F1": 0.5241,
+      "WAF_bypass": 0.6202,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    },
+    {
+      "Domain": "Simulation",
+      "Method": "SQLiRLLM",
+      "VDR": 0.4615,
+      "FPR": 0.0905,
+      "F1": 0.5596,
+      "WAF_bypass": 0.624,
+      "ESR": 1.0,
+      "Time_ms": 77.7
+    },
+    {
+      "Domain": "Live (Docker)",
+      "Method": "SQLMap",
+      "VDR": 0.0,
+      "FPR": NaN,
+      "F1": NaN,
+      "WAF_bypass": NaN,
+      "ESR": NaN,
+      "Time_ms": 28950.0
+    },
+    {
+      "Domain": "Live (Docker)",
+      "Method": "SQLiRLLM",
+      "VDR": 0.6,
+      "FPR": NaN,
+      "F1": NaN,
+      "WAF_bypass": 0.0,
+      "ESR": 1.0,
+      "Time_ms": 78460.0
+    }
+  ],
+  "live_extra_artifacts": {
+    "vuln_type_counts_csv": "results/live/live_vuln_type_counts.csv",
+    "vuln_type_counts_png": "results/live/live_vuln_type_by_lab.png",
+    "waf_events_csv": "results/live/live_waf_events.csv",
+    "waf_events_png": "results/live/live_waf_mechanism.png",
+    "requests_csv": "results/live/live_requests_to_detect.csv",
+    "requests_png": "results/live/live_requests_per_lab_mechanism.png"
+  }
+}

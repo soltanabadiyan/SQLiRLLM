@@ -1,0 +1,3 @@
+method,authorized_targets,total_targets,actions,violations_caught,ESR
+SQLiRLLM (ethics on),30,60,360,180,0.5
+LLM-only (no ethics),30,60,360,0,0.5

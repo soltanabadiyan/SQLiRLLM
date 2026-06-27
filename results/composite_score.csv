@@ -1,0 +1,6 @@
+method,composite_score
+RL-only,0.375
+Static,0.3787
+Random,0.3809
+LLM-only,0.543
+SQLiRLLM,0.5672
