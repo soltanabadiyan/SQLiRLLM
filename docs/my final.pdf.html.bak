@@ -79,17 +79,13 @@
 	testing process into three functional layers. The framework combines
 	Q-Learning for high-level strategy selection with</b></font><font size="2" style="font-size: 9pt"><span style="letter-spacing: 2.0pt"><b>
 	</b></span></font><font size="2" style="font-size: 9pt"><b>a
-	fine-tuned Phi-3 Mini model for payload generation. The payload
-	generation layer is augmented with a deterministic polymorphic
-	WAF-evasion pass and a blocked-response feedback loop, enabling
-	per-attempt keyword mutation, rotating whitespace obfuscation, and
-	LLM-directed adaptation when probes are blocked. This design aims
+	fine-tuned Phi-3 Mini model for payload generation. This design aims
 	to improve adaptability compared to purely static testing
-	approaches. Furthermore, the framework employs Qwen2.5-Coder-14B
-	for post-execution analysis, optimizing the trade-off between
+	approaches.Furthermore, the framework employs “Qwen2.5-Coder-14B
+	for post execution analysis, optimizing the trade-off between
 	computational overhead and detection accuracy. The framework is
-	designed to explore whether task decomposition, adaptive evasion,
-	and ethical constraints can improve vulnerability detection</b></font></font></p>
+	designed to explore whether task decomposition and ethical
+	constraints can improve vulnerability detection</b></font></font></p>
 	<p class="western" style="margin-left: 0.33in; margin-top: 0.1in">while<span style="letter-spacing: -0.1pt">
 	</span>remaining<span style="letter-spacing: -0.1pt"> </span>practical
 	for<span style="letter-spacing: -0.1pt"> </span>consumer-<span style="letter-spacing: -0.1pt">grade</span></p>
@@ -521,8 +517,7 @@
 	</span></font><font size="1" style="font-size: 8pt">planning,</font><font size="1" style="font-size: 8pt"><span style="letter-spacing: -0.4pt">
 	</span></font><font size="1" style="font-size: 8pt">Payload</font><font size="1" style="font-size: 8pt"><span style="letter-spacing: 2.0pt">
 	</span></font><font size="1" style="font-size: 8pt">generation with
-	ethical enforcement, adaptive WAF-evasion post-processing,
-	blocked-response feedback loop, and analysis feedback loop.</font></font></p>
+	ethical enforcement, and analysis feedback loop.</font></font></p>
 	<p class="western" style="margin-left: 0in; margin-top: 0.11in"><br/>
 
 	</p>
@@ -701,12 +696,7 @@
 	Payload Generation (Phi-3 Mini + LoRA) Once a strategy is selected,
 	the Payload Generation Layer invokes a Phi-3 Mini (3.8B) model. This
 	model represents an optimal balance between capability and
-	efficiency. The generation pipeline operates in a multi-stage
-	adaptive loop: for each injection strategy the layer first
-	constructs a context-enriched prompt, then applies deterministic
-	polymorphic post-processing whenever a WAF is present, and
-	incorporates blocked-response feedback across successive retry
-	attempts.</font></font></p>
+	efficiency,</font></font></p>
 	<p class="western" align="justify" style="line-height: 110%; text-indent: 0.03in; margin-left: 0.2in; margin-right: 0.03in">
 	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">demonstrating
 	sophisticated semantic understanding while maintaining fast
@@ -732,17 +722,6 @@
 	</span></font><font size="2" style="font-size: 10pt">the</font><font size="2" style="font-size: 10pt"><span style="letter-spacing: -0.3pt">
 	</span></font><font size="2" style="font-size: 10pt">following</font><font size="2" style="font-size: 10pt"><span style="letter-spacing: -0.2pt">
 	</span></font><font size="2" style="font-size: 10pt"><span style="letter-spacing: -0.1pt">components:</span></font></font></p>
-	<p class="western" align="left" style="line-height: 96%; margin-right: 0.22in; margin-top: 0.07in">
-	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">The
-	reward function is augmented by the adaptive evasion loop: when a
-	WAF blocks a payload and the evasion module successfully mutates a
-	subsequent payload to bypass it, the bypass event contributes
-	positively to the ESR component and the Q-table is updated
-	accordingly, reinforcing strategies that produced successful
-	evasion. The WAF-bypass rate (WBR) is tracked separately as a
-	diagnostic metric. Formally, the reward is unchanged in structure
-	but the ESR signal now reflects both ethical compliance and
-	operational reachability past active filtering layers.</font></font></p>
 	<p class="western" align="left" style="line-height: 91%; margin-right: 0.22in; margin-top: 0.07in">
 	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">In
 	this equation, the Vulnerability Detection Rate (VDR) and Ethical</font><font size="2" style="font-size: 10pt"><span style="letter-spacing: 2.0pt">
@@ -985,57 +964,7 @@
 		</span></font><font size="2" style="font-size: 10pt">implementation-ready</font><font size="2" style="font-size: 10pt"><span style="letter-spacing: -0.1pt">
 		</span></font><font size="2" style="font-size: 10pt">payloads</font><font size="2" style="font-size: 10pt"><span style="letter-spacing: -0.1pt">
 		</span></font><font size="2" style="font-size: 10pt">for the
-		specified strategy. On subsequent attempts (attempt &gt; 0), the
-		prompt is augmented with an explicit variation directive instructing
-		the model to produce a syntactically distinct payload using
-		different obfuscation or encoding than prior attempts. When a
-		previous probe was blocked by a WAF, a feedback string is appended
-		to the prompt so the model can incorporate that signal into the
-		next generation step.</font></font></p></li>
-		<li><p align="left" style="line-height: 113%"><font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">Adaptive
-		WAF-Evasion Module</font><font size="2" style="font-size: 10pt"><b>:
-		</b></font><font size="2" style="font-size: 10pt">When the target
-		context indicates a WAF is present, every LLM-generated payload is
-		post-processed by a deterministic polymorphic hardening pass
-		(<i>_harden_for_waf</i>) before transmission. This pass applies
-		three rotation-indexed transforms keyed by the attempt number to
-		ensure diversity across probes within the same strategy:
-		(1)&#160;<b>Whitespace substitution</b>: all whitespace tokens are
-		replaced by a rotating separator drawn from
-		&#123;<code>/**/</code>, <code>%0a</code>, <code>%09</code>&#125;,
-		eliminating space-based WAF signatures;
-		(2)&#160;<b>SQL keyword mutation</b>: reserved keywords
-		(<i>UNION</i>, <i>SELECT</i>, <i>FROM</i>, <i>SLEEP</i>,
-		<i>BENCHMARK</i>, etc.) are rewritten via one of three per-attempt
-		modes &#8212; random mixed-case, character-level inline-comment
-		splitting (<code>S/**/E/**/L/**/E/**/C/**/T</code>), or MySQL
-		versioned-comment wrapping
-		(<code>/*!50000SELECT*/</code>) &#8212; preventing static-signature
-		matching on case-insensitive rules;
-		(3)&#160;<b>Quote and comment rotation</b>: single-quote characters
-		are URL-encoded (<code>%27</code>) on odd attempts, and SQL comment
-		delimiters are substituted (<code>--</code> &#8594; <code>%23</code>)
-		on even attempts. Additionally, for time-based blind strategies on
-		MySQL targets, <code>SLEEP(n)</code> calls are rewritten to
-		<code>BENCHMARK(n00000,MD5(1))</code>, which achieves the same
-		timing side-channel while bypassing rules that match the
-		<code>SLEEP</code> token.</font></font></p></li>
-		<li><p align="left" style="line-height: 113%"><font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">Blocked-Response
-		Feedback Loop</font><font size="2" style="font-size: 10pt"><b>:
-		</b></font><font size="2" style="font-size: 10pt">The live runner
-		implements a per-strategy adaptive retry mechanism. After each
-		HTTP probe, the response outcome is classified as <i>BLOCKED</i>,
-		<i>VULNERABLE</i>, or <i>SAFE</i>. If a probe returns a 403/406
-		status or contains a WAF block signature, the testing phase is
-		upgraded to <i>waf_evasion</i> and a natural-language feedback
-		string (&#8220;Previous payload was blocked by WAF; use a different
-		encoding and token split&#8221;) is injected into the next
-		generation prompt. Conversely, upon a successful WAF bypass the
-		phase transitions to <i>verification</i> with positive feedback,
-		shifting the LLM&#8217;s objective from evasion to exploit
-		confirmation. This closed-loop policy ensures that each successive
-		attempt exploits information from the previous response rather
-		than sampling independently.</font></font></p></li>
+		specified strategy.</font></font></p></li>
 	</ul>
 	<ol start="10">
 		<li><p align="left" style="line-height: 98%; margin-right: 0.89in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">R.</font><font size="1" style="font-size: 8pt"><span style="letter-spacing: -0.3pt">
