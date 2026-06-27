@@ -1,7 +1,7 @@
 Lab,VulnType,Tool,Detected,Total_Observed
-DVWA,boolean_blind,SQLMap,0,0
+DVWA,boolean_blind,SQLMap,2,1
 DVWA,boolean_blind,SQLiRLLM,0,0
-DVWA,error_based,SQLMap,0,0
+DVWA,error_based,SQLMap,2,1
 DVWA,error_based,SQLiRLLM,0,0
 DVWA,other,SQLMap,0,0
 DVWA,other,SQLiRLLM,0,0
@@ -9,9 +9,9 @@ DVWA,second_order,SQLMap,0,0
 DVWA,second_order,SQLiRLLM,0,0
 DVWA,stacked_queries,SQLMap,0,0
 DVWA,stacked_queries,SQLiRLLM,1,1
-DVWA,time_blind,SQLMap,0,0
+DVWA,time_blind,SQLMap,2,1
 DVWA,time_blind,SQLiRLLM,0,0
-DVWA,union_based,SQLMap,0,0
+DVWA,union_based,SQLMap,2,1
 DVWA,union_based,SQLiRLLM,0,0
 DVWA (hard),boolean_blind,SQLMap,0,0
 DVWA (hard),boolean_blind,SQLiRLLM,0,0
@@ -97,9 +97,9 @@ bWAPP,time_blind,SQLMap,0,0
 bWAPP,time_blind,SQLiRLLM,0,0
 bWAPP,union_based,SQLMap,0,0
 bWAPP,union_based,SQLiRLLM,0,0
-sqli-labs,boolean_blind,SQLMap,0,0
+sqli-labs,boolean_blind,SQLMap,2,1
 sqli-labs,boolean_blind,SQLiRLLM,0,0
-sqli-labs,error_based,SQLMap,0,0
+sqli-labs,error_based,SQLMap,2,1
 sqli-labs,error_based,SQLiRLLM,0,0
 sqli-labs,other,SQLMap,0,0
 sqli-labs,other,SQLiRLLM,0,0
@@ -107,9 +107,9 @@ sqli-labs,second_order,SQLMap,0,0
 sqli-labs,second_order,SQLiRLLM,0,0
 sqli-labs,stacked_queries,SQLMap,0,0
 sqli-labs,stacked_queries,SQLiRLLM,0,0
-sqli-labs,time_blind,SQLMap,0,0
+sqli-labs,time_blind,SQLMap,2,1
 sqli-labs,time_blind,SQLiRLLM,0,0
-sqli-labs,union_based,SQLMap,0,0
+sqli-labs,union_based,SQLMap,2,1
 sqli-labs,union_based,SQLiRLLM,0,0
 sqli-labs Less-1,boolean_blind,SQLMap,0,0
 sqli-labs Less-1,boolean_blind,SQLiRLLM,0,0

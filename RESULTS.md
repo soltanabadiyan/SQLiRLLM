@@ -368,7 +368,7 @@ Nine real, intentionally vulnerable targets were deployed under Docker Compose a
 
 | Domain | Method | Detection rate | ESR |
 |---|---|---|---|
-| Live (Docker) | SQLMap | 0/9 = 0.000 | — |
+| Live (Docker) | SQLMap | 4/9 = 0.444 | — |
 | Live (Docker) | SQLiRLLM | **6/9 = 0.667** | **1.000** |
 
 ### Interpretation

@@ -51,7 +51,7 @@
       "Time_ms": 77.7
     }
   ],
-  "live_targets_tested": 6,
+  "live_targets_tested": 9,
   "cross_comparison": [
     {
       "Domain": "Simulation",
@@ -106,12 +106,12 @@
     {
       "Domain": "Live (Docker)",
       "Method": "SQLMap",
-      "VDR": 0.0,
+      "VDR": 0.444,
       "FPR": NaN,
       "F1": NaN,
-      "WAF_bypass": NaN,
+      "WAF_bypass": 0.0,
       "ESR": NaN,
-      "Time_ms": 18866.666666666664
+      "Time_ms": 4433.333333333334
     },
     {
       "Domain": "Live (Docker)",

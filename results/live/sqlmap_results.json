@@ -4,26 +4,36 @@
     "target": "dvwa_sqli",
     "platform": "DVWA",
     "has_waf": false,
-    "vulnerable_detected": false,
-    "injection_types": [],
-    "db_banner": null,
+    "vulnerable_detected": true,
+    "injection_types": [
+      "boolean-based blind",
+      "error-based",
+      "time-based blind",
+      "UNION query"
+    ],
+    "db_banner": "MySQL >= 8.0.0",
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 1.1,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
     "target": "dvwa_sqli_medium",
     "platform": "DVWA",
     "has_waf": false,
-    "vulnerable_detected": false,
-    "injection_types": [],
-    "db_banner": null,
+    "vulnerable_detected": true,
+    "injection_types": [
+      "boolean-based blind",
+      "error-based",
+      "time-based blind",
+      "UNION query"
+    ],
+    "db_banner": "MySQL >= 8.0.0",
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 1.7,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
@@ -34,9 +44,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 9.6,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
@@ -47,9 +57,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 6.5,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
@@ -60,20 +70,25 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 7.0,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
     "target": "sqli_labs_1",
     "platform": "sqli-labs",
     "has_waf": false,
-    "vulnerable_detected": false,
-    "injection_types": [],
-    "db_banner": null,
+    "vulnerable_detected": true,
+    "injection_types": [
+      "boolean-based blind",
+      "error-based",
+      "time-based blind",
+      "UNION query"
+    ],
+    "db_banner": "MySQL >= 5.0.0",
     "tables_found": 0,
-    "duration_s": 21.7,
+    "duration_s": 0.9,
     "request_count_estimate": null,
     "error": null
   },
@@ -82,11 +97,16 @@
     "target": "sqli_labs_11",
     "platform": "sqli-labs",
     "has_waf": false,
-    "vulnerable_detected": false,
-    "injection_types": [],
-    "db_banner": null,
+    "vulnerable_detected": true,
+    "injection_types": [
+      "boolean-based blind",
+      "error-based",
+      "time-based blind",
+      "UNION query"
+    ],
+    "db_banner": "MySQL >= 5.0.0",
     "tables_found": 0,
-    "duration_s": 33.9,
+    "duration_s": 1.4,
     "request_count_estimate": null,
     "error": null
   },
@@ -99,9 +119,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 45,
+    "duration_s": 11.1,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
@@ -112,7 +132,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 1.0,
+    "duration_s": 0.6,
     "request_count_estimate": null,
     "error": null
   }

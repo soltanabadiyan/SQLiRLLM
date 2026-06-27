@@ -1,2 +1,3 @@
 Tool,Target,Lab,WAF_Encountered,WAF_Detected_Blocked,WAF_Bypassed
+SQLMap,dvwa_waf,DVWA+ModSecurity,1,1,0
 SQLiRLLM,dvwa_waf,DVWA+ModSecurity,24,24,0

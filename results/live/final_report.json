@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-27 21:59:22Z",
+  "generated_utc": "2026-06-27 22:32:52Z",
   "run_config": {
     "episodes": "400",
     "targets_n": "40",
@@ -33,9 +33,9 @@
   },
   "live": {
     "SQLMap": {
-      "detected": 0,
+      "detected": 4,
       "total": 9,
-      "rate": 0.0
+      "rate": 0.4444
     },
     "SQLiRLLM": {
       "detected": 6,

@@ -292,7 +292,7 @@ Observed live detection rates:
 
 | Tool | Live detection rate | Coverage |
 |---|---|---|
-| SQLMap | 0/9 = 0.0% (bounded-time setting) | — |
+| SQLMap | 4/9 = 44.4% | DVWA low/medium, sqli-labs-1, sqli-labs-11 |
 | **SQLiRLLM** | **6/9 = 66.7%** | All DVWA levels, Juice Shop, sqli-labs-1 |
 
 **Detailed breakdown:**

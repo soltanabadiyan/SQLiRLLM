@@ -37,6 +37,7 @@ class LiveTarget:
     url: str
     data: Optional[str]          # POST body (None = GET)
     cookie: Optional[str]
+    parameter: Optional[str] = None
     extra_flags: List[str] = field(default_factory=list)
     has_waf: bool = False
     platform: str = ""
@@ -53,15 +54,15 @@ class LiveTarget:
         cmd = [
             "sqlmap",
             "-u", self.url,
+            "-p", self.parameter or "",
             "--level", str(level),
             "--risk", str(risk),
             "--timeout", str(timeout),
             "--retries", "2",
             "--batch",           # non-interactive
             "--output-dir", str(RESULTS / f"sqlmap_{self.name}"),
-            "--forms",
-            "--crawl", "1",
         ]
+        cmd = [arg for arg in cmd if arg != ""]
         if self.data:
             cmd += ["--data", self.data]
         if self.cookie:
@@ -83,6 +84,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8090/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=low",
+        parameter="id",
         platform="DVWA",
         extra_flags=["--dbms=mysql"],
     ),
@@ -91,6 +93,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8090/vulnerabilities/sqli/",
         data="id=1&Submit=Submit",
         cookie="PHPSESSID=placeholder; security=medium",
+        parameter="id",
         platform="DVWA",
         extra_flags=["--dbms=mysql"],
     ),
@@ -99,6 +102,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8095/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=high",
+        parameter="id",
         platform="DVWA (hard)",
         extra_flags=["--dbms=mysql"],
     ),
@@ -107,6 +111,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8096/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=impossible",
+        parameter="id",
         platform="DVWA (max/impossible)",
         extra_flags=["--dbms=mysql"],
     ),
@@ -115,6 +120,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8080/vulnerabilities/sqli/?id=1&Submit=Submit",
         data=None,
         cookie="PHPSESSID=placeholder; security=low",
+        parameter="id",
         platform="DVWA+ModSecurity",
         has_waf=True,
         extra_flags=["--dbms=mysql", "--tamper=space2comment,charencode"],
@@ -124,6 +130,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8094/Less-1/?id=1",
         data=None,
         cookie=None,
+        parameter="id",
         platform="sqli-labs",
         extra_flags=["--dbms=mysql"],
     ),
@@ -132,6 +139,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8094/Less-11/",
         data="uname=admin&passwd=admin&submit=Submit",
         cookie=None,
+        parameter="uname",
         platform="sqli-labs",
         extra_flags=["--dbms=mysql"],
     ),
@@ -140,6 +148,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8091/sqli_1.php?title=iron+man&action=search",
         data=None,
         cookie="PHPSESSID=placeholder; security_level=0",
+        parameter="title",
         platform="bWAPP",
         extra_flags=["--dbms=mysql"],
     ),
@@ -148,6 +157,7 @@ TARGETS: Dict[str, LiveTarget] = {
         url="http://localhost:8092/rest/user/login",
         data='{"email":"test@test.com","password":"test"}',
         cookie=None,
+        parameter="email",
         platform="Juice Shop",
         extra_flags=["--dbms=sqlite", "--content-type=application/json"],
     ),
@@ -157,20 +167,53 @@ TARGETS: Dict[str, LiveTarget] = {
 # --------------------------------------------------------------------------- #
 # Session cookie helpers                                                       #
 # --------------------------------------------------------------------------- #
-def _get_dvwa_session(level: str = "low") -> Optional[str]:
+def _get_dvwa_session(base_url: str, level: str = "low") -> Optional[str]:
     """Obtain a DVWA PHPSESSID by logging in via curl."""
     try:
+        login_url = f"{base_url.rstrip('/')}/login.php"
         login = subprocess.run(
-            ["curl", "-s", "-c", "-", "-b", "",
-             "-d", "username=admin&password=password&Login=Login",
-             "http://localhost:8090/login.php"],
+            ["curl", "-s", "-c", "-", "-b", "", login_url],
             capture_output=True, text=True, timeout=15,
         )
+        token_m = re.search(r"name=['\"]user_token['\"]\s+value=['\"]([^'\"]+)", login.stdout)
+        token = token_m.group(1) if token_m else ""
         m = re.search(r"PHPSESSID\s+(\S+)", login.stdout)
         sid = m.group(1) if m else "placeholder"
-        return f"PHPSESSID={sid}; security={level}"
+        post = subprocess.run(
+            [
+                "curl", "-s", "-i", "-b", f"PHPSESSID={sid}", "-c", "-",
+                "-d", f"username=admin&password=password&Login=Login&user_token={token}",
+                login_url,
+            ],
+            capture_output=True, text=True, timeout=15,
+        )
+        post_cookie = re.search(r"PHPSESSID\s+(\S+)", post.stdout)
+        final_sid = post_cookie.group(1) if post_cookie else sid
+        return f"PHPSESSID={final_sid}; security={level}"
     except Exception:
         return None
+
+
+def _prepare_sqli_labs() -> None:
+    """Initialize/reset sqli-labs database so direct targets are reachable."""
+    try:
+        subprocess.run(
+            ["curl", "-s", "http://localhost:8094/sql-connections/setup-db.php"],
+            capture_output=True, text=True, timeout=30,
+        )
+    except Exception:
+        return
+
+
+def _prepare_bwapp() -> None:
+    """Ensure bWAPP installation has been executed."""
+    try:
+        subprocess.run(
+            ["curl", "-s", "http://localhost:8091/install.php?install=yes"],
+            capture_output=True, text=True, timeout=30,
+        )
+    except Exception:
+        return
 
 
 # --------------------------------------------------------------------------- #
@@ -214,9 +257,14 @@ def run_sqlmap(
             level_str = "impossible"
         else:
             level_str = "low"
-        cookie = _get_dvwa_session(level_str)
+        base_url = target.url.split("/vulnerabilities/")[0]
+        cookie = _get_dvwa_session(base_url, level_str)
         if cookie:
             target.cookie = cookie
+    elif "sqli_labs" in target.name:
+        _prepare_sqli_labs()
+    elif "bwapp" in target.name:
+        _prepare_bwapp()
 
     cmd = target.sqlmap_args(
         level=level,
@@ -247,11 +295,15 @@ def run_sqlmap(
         )
 
     # Parse key indicators from sqlmap stdout.
-    vulnerable = bool(re.search(r"is vulnerable|sqlmap identified", out, re.I))
     injection_types = re.findall(r"Type:\s+([^\n]+)", out)
     banner_m = re.search(r"back-end DBMS:\s+([^\n]+)", out)
     banner = banner_m.group(1).strip() if banner_m else None
     tables = len(re.findall(r"^\+[-+]+\+$", out, re.M))
+    vulnerable = bool(
+        re.search(r"is vulnerable|sqlmap identified", out, re.I)
+        or injection_types
+        or banner
+    )
 
     req_count = None
     req_patterns = [

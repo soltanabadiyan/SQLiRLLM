@@ -1,6 +1,6 @@
 # SQLiRLLM Unified Final Report
 
-Generated: 2026-06-27 21:59:22Z
+Generated: 2026-06-27 22:32:52Z
 
 ## Pipeline Summary
 
@@ -34,7 +34,7 @@ This report was generated from a full rerun pipeline using the current 9-target 
 
 ## Live Highlights
 
-- SQLMap detection: 0/9 = 0.000
+- SQLMap detection: 4/9 = 0.444
 - SQLiRLLM detection: 6/9 = 0.667
 
 ## Output Artifacts
