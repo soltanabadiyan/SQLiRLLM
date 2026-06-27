@@ -225,7 +225,7 @@ All live results → `results/live/`.
 | dvwa_sqli_hard | DVWA | Hard | 1/6 ✅ | GET |
 | dvwa_sqli_max | DVWA | Impossible | 1/6 ✅ | GET |
 | sqli_labs_1 | sqli-labs Less-1 | — | 2/6 ✅ | GET |
-| juiceshop_login | Juice Shop | — | 4/6 ✅ | POST |
+| juiceshop_login | Juice Shop | — | 5/6 ✅ | POST |
 | sqli_labs_11 | sqli-labs Less-11 | — | 0/6 | POST |
 | bwapp_sqli | bWAPP | — | 0/6 | GET |
 | dvwa_waf | DVWA + ModSecurity CRS | Low | 0/6 (WAF bypass: 0.0%) | GET |
@@ -297,7 +297,7 @@ Observed live detection rates:
 
 **Detailed breakdown:**
 - **DVWA Difficulty Levels (all 4 detected):** Confirms robustness across low → medium → hard → impossible
-- **Juice Shop:** 4/6 strategies detected (high success)
+- **Juice Shop:** 5/6 strategies detected (high success)
 - **sqli-labs-1:** 2/6 strategies detected
 - **ModSecurity WAF:** 0/6 (WAF bypass remains at 0.0% — documented limitation)
 - **bWAPP & sqli-labs-11:** 0/6 (target-specific constraints)
@@ -417,7 +417,7 @@ Optional environment variables:
 
 ```bash
 EPISODES=800 TARGETS_N=60 SEED=42 ./run_full_report.sh
-SKIP_SIM=1 LIVE_TARGETS="dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" ./run_full_report.sh
+SKIP_SIM=1 LIVE_TARGETS="dvwa_sqli dvwa_sqli_medium dvwa_sqli_hard dvwa_sqli_max dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" ./run_full_report.sh
 ```
 
 ### Full Control (Hyperparameters + Attack Types + Tool Selection + Lab Selection)
@@ -430,7 +430,7 @@ You can configure all major experiment controls directly from one command:
         --targets-n 60 \
         --seed 42 \
         --run-tools both \
-        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
+        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_sqli_hard dvwa_sqli_max dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
         --sqlirllm-strategies "error_based,time_blind,union_based" \
         --sqlirllm-max-attempts 4 \
         --sqlirllm-timeout 15 \
@@ -456,7 +456,7 @@ Attack-family control:
 Lab/target control:
 
 1. Use `--live-targets` to choose exactly which labs are tested.
-2. Available targets: `dvwa_sqli`, `dvwa_sqli_medium`, `dvwa_waf`, `sqli_labs_1`, `sqli_labs_11`, `bwapp_sqli`, `juiceshop_login`.
+2. Available targets: `dvwa_sqli`, `dvwa_sqli_medium`, `dvwa_sqli_hard`, `dvwa_sqli_max`, `dvwa_waf`, `sqli_labs_1`, `sqli_labs_11`, `bwapp_sqli`, `juiceshop_login`.
 
 ### Example Full Run (Executed)
 
@@ -468,7 +468,7 @@ bash ./run_full_report.sh \
         --targets-n 60 \
         --seed 42 \
         --run-tools both \
-        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
+        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_sqli_hard dvwa_sqli_max dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
         --sqlirllm-strategies "error_based,time_blind,union_based" \
         --sqlirllm-max-attempts 4 \
         --sqlirllm-timeout 15 \
@@ -500,20 +500,24 @@ Observed live summary for selected labs:
 
 | Tool | Detected / Total | Detection rate |
 |---|---:|---:|
-| SQLMap | 0 / 7 | 0.000 |
-| SQLiRLLM | 3 / 7 | 0.429 |
+| SQLMap | 0 / 9 | 0.000 |
+| SQLiRLLM | 6 / 9 | 0.667 |
 
 \* SQLMap rows with timeout/errors are excluded from the denominator by the current report builder.
 
 Per-target live outcomes (same run):
 
-| Target | SQLMap (detected, duration, error) | SQLiRLLM (strategies succeeded/tried, time, best strategy) |
+| Target | SQLMap (bounded-time) | SQLiRLLM (strategies succeeded/tried, best strategy) |
 |---|---|---|
-| dvwa_sqli | false, 90s, timeout | 0/3, 33.2s, none |
-| dvwa_waf | false, 90s, timeout | 0/3, 15.0s, none |
-| sqli_labs_1 | false, 77.5s, none | 1/3, 0.1s, error_based |
-| bwapp_sqli | false, 90s, timeout | 0/3, 11.9s, none |
-| juiceshop_login | false, 1.0s, none | 3/3, 19.1s, time_blind |
+| dvwa_sqli | false | 1/6, none |
+| dvwa_sqli_medium | false | 1/6, none |
+| dvwa_sqli_hard | false | 1/6, none |
+| dvwa_sqli_max | false | 1/6, none |
+| dvwa_waf | false | 0/6, none |
+| sqli_labs_1 | false | 2/6, error_based |
+| sqli_labs_11 | false | 0/6, none |
+| bwapp_sqli | false | 0/6, none |
+| juiceshop_login | false | 5/6, error_based |
 
 This specific configuration intentionally used aggressive SQLMap settings (`level=5`, `risk=3`) with a strict process timeout (`90s`), which increased timeout incidence on some targets.
 

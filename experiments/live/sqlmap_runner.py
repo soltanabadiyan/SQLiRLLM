@@ -94,6 +94,22 @@ TARGETS: Dict[str, LiveTarget] = {
         platform="DVWA",
         extra_flags=["--dbms=mysql"],
     ),
+    "dvwa_sqli_hard": LiveTarget(
+        name="dvwa_sqli_hard",
+        url="http://localhost:8095/vulnerabilities/sqli/?id=1&Submit=Submit",
+        data=None,
+        cookie="PHPSESSID=placeholder; security=high",
+        platform="DVWA (hard)",
+        extra_flags=["--dbms=mysql"],
+    ),
+    "dvwa_sqli_max": LiveTarget(
+        name="dvwa_sqli_max",
+        url="http://localhost:8096/vulnerabilities/sqli/?id=1&Submit=Submit",
+        data=None,
+        cookie="PHPSESSID=placeholder; security=impossible",
+        platform="DVWA (max/impossible)",
+        extra_flags=["--dbms=mysql"],
+    ),
     "dvwa_waf": LiveTarget(
         name="dvwa_waf",
         url="http://localhost:8080/vulnerabilities/sqli/?id=1&Submit=Submit",
@@ -190,7 +206,14 @@ def run_sqlmap(
 
     # Try to get a real session for DVWA targets.
     if "dvwa" in target.name:
-        level_str = "medium" if "medium" in target.name else "low"
+        if "medium" in target.name:
+            level_str = "medium"
+        elif "hard" in target.name:
+            level_str = "high"
+        elif "max" in target.name:
+            level_str = "impossible"
+        else:
+            level_str = "low"
         cookie = _get_dvwa_session(level_str)
         if cookie:
             target.cookie = cookie

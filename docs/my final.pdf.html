@@ -789,7 +789,7 @@
 		<li><p align="left" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">RESULTS</font></font></p></li>
 	</ol>
 	<p class="western" align="left" style="line-height: 110%; margin-right: 0.2in">
-	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">We evaluated SQLiRLLM in both simulation and live Docker-based benchmark environments. The final live run used seven targets (DVWA low/medium, DVWA+WAF, sqli-labs Less-1/Less-11, bWAPP, and Juice Shop) with strict no-cache LLM verification enabled (85 API calls, 0 cache hits, 0 offline fallbacks). SQLiRLLM detected vulnerabilities in 3/7 targets (0.4286), while SQLMap detected 0/7 within the same time-constrained setup. On the protected DVWA+ModSecurity target, WAF bypass remained 0.0 in this run, highlighting an active robustness gap under strict CRS rules.</font></font></p>
+	<font size="2" style="font-size: 11pt"><font size="2" style="font-size: 10pt">We evaluated SQLiRLLM in both simulation and live Docker-based benchmark environments. The rerun used nine targets (DVWA low/medium/hard/impossible, DVWA+WAF, sqli-labs Less-1/Less-11, bWAPP, and Juice Shop). SQLiRLLM detected vulnerabilities in 6/9 targets (0.667), while SQLMap remained at 0/9 under the same bounded-time setup. On the protected DVWA+ModSecurity target, WAF bypass remained 0.0, confirming the current limitation of encoding-only evasion against CRS-style semantic inspection.</font></font></p>
 	<p class="western" align="center" style="line-height: 100%; margin-top: 0.08in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">TABLE II</font></font></p>
 	<p class="western" align="center" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">SIMULATION PERFORMANCE SUMMARY</font></font></p>
 	<table border="1" cellspacing="0" cellpadding="3" style="border-collapse: collapse; width: 100%; font-size: 8pt; margin-top: 0.04in; margin-bottom: 0.08in">
@@ -811,7 +811,7 @@
 	<p class="western" align="center" style="margin-top: 0.03in"><img src="../results/live/sim_comparison.png" name="Image Sim Comparison" align="bottom" width="520" border="0"/></p>
 	<p class="western" align="left" style="line-height: 100%; margin-right: 0.2in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">Fig.2 Simulation comparison of VDR, F1, WAF bypass, and runtime across baseline policies and SQLiRLLM.</font></font></p>
 	<p class="western" align="center" style="line-height: 100%; margin-top: 0.08in"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">TABLE III</font></font></p>
-	<p class="western" align="center" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">LIVE BENCHMARK RESULTS (7 TARGETS)</font></font></p>
+	<p class="western" align="center" style="line-height: 100%"><font size="2" style="font-size: 11pt"><font size="1" style="font-size: 8pt">LIVE BENCHMARK RESULTS (9 TARGETS)</font></font></p>
 	<table border="1" cellspacing="0" cellpadding="3" style="border-collapse: collapse; width: 100%; font-size: 8pt; margin-top: 0.04in; margin-bottom: 0.08in">
 		<tr>
 			<th align="left">Target</th>
@@ -820,8 +820,10 @@
 			<th align="center">SQLMap</th>
 			<th align="center">SQLiRLLM</th>
 		</tr>
-		<tr><td>dvwa_sqli</td><td>DVWA</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
-		<tr><td>dvwa_sqli_medium</td><td>DVWA (medium)</td><td align="center">No</td><td align="center">No</td><td align="center">No</td></tr>
+		<tr><td>dvwa_sqli</td><td>DVWA (low)</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+		<tr><td>dvwa_sqli_medium</td><td>DVWA (medium)</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+		<tr><td>dvwa_sqli_hard</td><td>DVWA (hard)</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
+		<tr><td>dvwa_sqli_max</td><td>DVWA (impossible)</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
 		<tr><td>dvwa_waf</td><td>DVWA+ModSecurity</td><td align="center">Yes</td><td align="center">No</td><td align="center">No</td></tr>
 		<tr><td>sqli_labs_1</td><td>sqli-labs Less-1</td><td align="center">No</td><td align="center">No</td><td align="center">Yes</td></tr>
 		<tr><td>sqli_labs_11</td><td>sqli-labs Less-11</td><td align="center">No</td><td align="center">No</td><td align="center">No</td></tr>
@@ -845,7 +847,7 @@
 		<tr><td>dvwa_sqli_hard</td><td>DVWA</td><td>Hard</td><td align="center">✓</td><td align="center">1/6</td></tr>
 		<tr><td>dvwa_sqli_max</td><td>DVWA</td><td>Impossible</td><td align="center">✓</td><td align="center">1/6</td></tr>
 		<tr><td>sqli_labs_1</td><td>sqli-labs Less-1</td><td>—</td><td align="center">✓</td><td align="center">2/6</td></tr>
-		<tr><td>juiceshop_login</td><td>Juice Shop</td><td>—</td><td align="center">✓</td><td align="center">4/6</td></tr>
+		<tr><td>juiceshop_login</td><td>Juice Shop</td><td>—</td><td align="center">✓</td><td align="center">5/6</td></tr>
 		<tr><td>sqli_labs_11</td><td>sqli-labs Less-11</td><td>—</td><td align="center">✗</td><td align="center">0/6</td></tr>
 		<tr><td>bwapp_sqli</td><td>bWAPP</td><td>—</td><td align="center">✗</td><td align="center">0/6</td></tr>
 		<tr><td>dvwa_waf</td><td>DVWA+ModSecurity</td><td>Low + WAF</td><td align="center">✗</td><td align="center">0/6</td></tr>

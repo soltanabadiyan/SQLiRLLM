@@ -254,25 +254,25 @@ Created standalone document with:
 ### Command
 ```bash
 python -m experiments.live.sqlirllm_runner \
-  --targets dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login \
+    --targets dvwa_sqli dvwa_sqli_medium dvwa_sqli_hard dvwa_sqli_max dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login \
   --strategies union_based error_based boolean_blind time_blind stacked_queries second_order \
   --max-attempts 4 \
-  --request-timeout 20 \
+    --request-timeout 15 \
   --verify-api-ping
 ```
 
 ### Expected Scope
-- **7 targets** (including dvwa_waf with ModSecurity)
+- **9 targets** (including DVWA hard/max and dvwa_waf with ModSecurity)
 - **6 strategies** per target
 - **4 attempts** per strategy (allows all 4 escalation levels)
-- **~168 payloads** generated and tested
+- **~216 payloads** generated and tested
 - **Estimated duration:** 8–15 minutes
 
 ### Success Criteria
 1. **dvwa_waf WAF bypass rate:** > 0.0 (improvement from baseline)
 2. **Overall VDR preservation:** ≥ 0.4 (maintenance of detection capability)
 3. **Unprotected targets:** Same or improved detection
-4. **No runtime errors:** All 7 targets complete successfully
+4. **No runtime errors:** All 9 targets complete successfully
 
 ---
 
@@ -289,7 +289,7 @@ python -m experiments.live.sqlirllm_runner \
 | dvwa_sqli_hard | ✅ | 1/6 | **New:** Hard validation bypassed |
 | dvwa_sqli_max | ✅ | 1/6 | **New:** Impossible validation bypassed |
 | sqli_labs_1 | ✅ | 2/6 | Multiple strategies effective |
-| juiceshop_login | ✅ | 4/6 | Highest success (66.7%) |
+| juiceshop_login | ✅ | 5/6 | Highest success (83.3%) |
 | dvwa_waf (ModSecurity) | ❌ | 0/6 | WAF bypass: 0.0% (realistic) |
 | sqli_labs_11 | ❌ | 0/6 | Protocol constraint |
 | bwapp_sqli | ❌ | 0/6 | Target limitation |
@@ -303,7 +303,7 @@ python -m experiments.live.sqlirllm_runner \
 | Docker setup | ✅ Complete | 9 vulnerable targets running (added dvwa_hard, dvwa_max) |
 | Extended test | ✅ Complete | All 9 targets tested, 66.7% detection |
 | Documentation | ✅ Updated | RESULTS.md, README.md, IMPLEMENTATION_SUMMARY.md |
-| HTML paper | 🔄 In Progress | Integrating new benchmark results |
+| HTML paper | ✅ Updated | Extended benchmark tables and conclusion integrated |
 
 ### Key Achievement: DVWA Difficulty Scaling
 
@@ -326,13 +326,7 @@ SQLiRLLM successfully detects vulnerabilities across **all 4 DVWA difficulty lev
 
 ## Previous Test Status (7 Targets)
 
-| Task | Status | Details |
-|---|---|---|
-| Code changes | ✅ Complete | 8 new functions, 4 new methods, enhanced prompt |
-| Documentation | ✅ Complete | README, RESULTS, WAF_EVASION_IMPROVEMENTS updated |
-| Docker env | ✅ Ready | 7 vulnerable targets running, all healthy |
-| Test execution | 🔄 In Progress | Started 23:51 Jun 27, PID 667934 |
-| Results analysis | ⏳ Pending | Awaits test completion |
+Superseded by the 9-target extended benchmark. Historical 7-target values are retained in git history.
 
 ---
 

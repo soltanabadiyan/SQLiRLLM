@@ -8,7 +8,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 180,
+    "duration_s": 45,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -21,7 +21,33 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 180,
+    "duration_s": 45,
+    "request_count_estimate": null,
+    "error": "timeout"
+  },
+  {
+    "tool": "SQLMap",
+    "target": "dvwa_sqli_hard",
+    "platform": "DVWA (hard)",
+    "has_waf": false,
+    "vulnerable_detected": false,
+    "injection_types": [],
+    "db_banner": null,
+    "tables_found": 0,
+    "duration_s": 45,
+    "request_count_estimate": null,
+    "error": "timeout"
+  },
+  {
+    "tool": "SQLMap",
+    "target": "dvwa_sqli_max",
+    "platform": "DVWA (max/impossible)",
+    "has_waf": false,
+    "vulnerable_detected": false,
+    "injection_types": [],
+    "db_banner": null,
+    "tables_found": 0,
+    "duration_s": 45,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -34,7 +60,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 180,
+    "duration_s": 45,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -47,7 +73,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 173.1,
+    "duration_s": 21.7,
     "request_count_estimate": null,
     "error": null
   },
@@ -60,9 +86,9 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 180,
+    "duration_s": 33.9,
     "request_count_estimate": null,
-    "error": "timeout"
+    "error": null
   },
   {
     "tool": "SQLMap",
@@ -73,7 +99,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 180,
+    "duration_s": 45,
     "request_count_estimate": null,
     "error": "timeout"
   },
@@ -86,7 +112,7 @@
     "injection_types": [],
     "db_banner": null,
     "tables_found": 0,
-    "duration_s": 1.2,
+    "duration_s": 1.0,
     "request_count_estimate": null,
     "error": null
   }

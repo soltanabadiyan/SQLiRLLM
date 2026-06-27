@@ -80,7 +80,7 @@ Juice Shop,second_order,SQLiRLLM,1,1
 Juice Shop,stacked_queries,SQLMap,0,0
 Juice Shop,stacked_queries,SQLiRLLM,1,1
 Juice Shop,time_blind,SQLMap,0,0
-Juice Shop,time_blind,SQLiRLLM,0,0
+Juice Shop,time_blind,SQLiRLLM,1,1
 Juice Shop,union_based,SQLMap,0,0
 Juice Shop,union_based,SQLiRLLM,1,1
 bWAPP,boolean_blind,SQLMap,0,0

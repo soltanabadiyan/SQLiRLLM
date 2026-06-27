@@ -1,9 +1,9 @@
 {
   "llm_configured": true,
-  "api_calls": 2,
-  "cache_hits": 285,
+  "api_calls": 4,
+  "cache_hits": 371,
   "offline_payload_fallbacks": 0,
-  "analyzer_llm_calls": 143,
+  "analyzer_llm_calls": 187,
   "analyzer_heuristic_calls": 0,
   "llm_cache_enabled": true,
   "strict_llm_api": false,

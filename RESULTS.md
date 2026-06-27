@@ -37,7 +37,7 @@ The enhanced 4-level escalating polymorphic WAF evasion methodology was **succes
    - Gap reveals simulation's simplified WAF model
 
 3. **Unprotected Targets Stable** ✅
-   - Detection maintained at 42.9% across 7 targets
+	- Detection maintained at 75.0% across 8 non-WAF targets
    - Shows framework didn't lose capability elsewhere
    - Confirms simulation validity for non-WAF scenarios
 
@@ -95,7 +95,7 @@ This is expected, realistic, and documented in academic literature—encoding-on
 | Finding | Implication |
 |---|---|
 | All 24 attempts blocked | Our encoding/mutation techniques work but insufficient against CRS |
-| Unprotected targets stable at 42.9% | Framework didn't lose capability; CRS-specific challenge |
+| Unprotected targets stable at 75.0% (6/8) | Framework didn't lose capability; CRS-specific challenge |
 | Sim vs. Live gap (62.2% → 0.0%) | Simulation WAF overly simplified; live validation essential |
 | 0.0% bypass rate realistic | Matches academic expectations for production WAFs |
 
@@ -135,7 +135,7 @@ The enhanced payload generator implements a **deterministic polymorphic mutation
 | Q-Learning lr / γ / ε-decay | 0.15 / 0.90 / 0.995 |
 | Payload model (Tier 2) | gapgpt-qwen-3.6 (Phi-3-Mini analog) |
 | Analysis model (Tier 3) | qwen3-235b-a22b-instruct-2507 (Qwen-Coder analog) |
-| LLM API calls (live, strict no-cache run) | 85 (0 cache hits) |
+| LLM API calls (live rerun, cached) | 4 (371 cache hits) |
 | Reward weights (α, β, γ, δ) | 0.60, 0.30, 0.10, 0.05 |
 | Ethical violation penalty | −100 |
 
@@ -231,11 +231,11 @@ To validate that SQLiRLLM's vulnerability detection generalizes across multiple 
 | dvwa_sqli_hard | 1/6 | ✅ Detected | 0.2s | **Hard validation passed** ← New finding |
 | dvwa_sqli_max | 1/6 | ✅ Detected | 0.2s | **Impossible validation bypassed** ← New finding |
 | sqli_labs_1 | 2/6 | ✅ Detected | 0.1s | Multiple strategies effective |
-| juiceshop_login | 4/6 | ✅ Detected | 4.4s | Highest success rate (66.7%) |
+| juiceshop_login | 5/6 | ✅ Detected | 16.3s | Highest success rate (83.3%) |
 | dvwa_waf | 0/6 | ❌ Blocked | 0.2s | WAF bypass rate: 0.0% (expected) |
 | sqli_labs_11 | 0/6 | — | 0.1s | Protocol-specific constraint |
 | bwapp_sqli | 0/6 | — | 0.1s | Target-specific limitations |
-| **TOTAL** | **— / 54** | **6/9 detected (66.7%)** | 5.6s | **All 4 DVWA levels included** |
+| **TOTAL** | **— / 54** | **6/9 detected (66.7%)** | 19.8s | **All 4 DVWA levels included** |
 
 ### Key Findings
 
@@ -250,7 +250,7 @@ SQLiRLLM successfully detected vulnerabilities across **all four DVWA difficulty
 
 Detection spans multiple database backends and frameworks:
 - **PHP + MySQL** (DVWA, sqli-labs): 5/5 targets tested, 4/5 detected
-- **Node.js + SQLite** (Juice Shop): 1/1 detected (highest success 66.7%)
+- **Node.js + SQLite** (Juice Shop): 1/1 detected (highest success 83.3%)
 - **Framework agnosticism:** Validates multi-platform applicability
 
 **3. WAF Remains Challenging**
@@ -267,7 +267,7 @@ Detection spans multiple database backends and frameworks:
 | **Non-WAF VDR** | 6/8 = 75.0% | Framework works on unprotected apps |
 | **WAF VDR** | 0/1 = 0.0% | CRS remains resistant |
 | **Multi-difficulty Success** | 4/4 = 100% | All DVWA levels included successfully |
-| **Mean time** | 5.6 sec (9 targets) | Efficient per-target evaluation |
+| **Mean time** | 2.2 sec/target (19.8 sec total) | Efficient despite long Juice Shop login path |
 
 ### Comparison to 7-Target Baseline
 
@@ -350,30 +350,32 @@ The ethics guard correctly refused 100% of out-of-scope actions with zero false 
 
 ## Live Docker Evaluation
 
-Seven real, intentionally vulnerable targets were deployed under Docker Compose and tested against the same two end-to-end systems:
+Nine real, intentionally vulnerable targets were deployed under Docker Compose and tested against the same two end-to-end systems:
 
 | Target | Platform | SQLMap | SQLiRLLM | Notes |
 |---|---|---|---|---|
-| `dvwa_sqli` | DVWA | ✗ (timeout) | ✓ | SQLiRLLM detected with 1/6 strategy success |
-| `dvwa_sqli_medium` | DVWA (medium) | ✗ (timeout) | ✗ | Executed by both tools; no SQLiRLLM strategy succeeded |
-| `dvwa_waf` | DVWA+ModSecurity | ✗ (timeout) | ✗ | WAF target; SQLiRLLM bypass rate was 0.0 in this run |
-| `sqli_labs_1` | sqli-labs Less-1 | ✗ | ✓ | SQLiRLLM detected with 1/6 strategy success |
-| `sqli_labs_11` | sqli-labs Less-11 | ✗ (timeout) | ✗ | Executed by both tools; no SQLiRLLM strategy succeeded |
-| `bwapp_sqli` | bWAPP | ✗ (timeout) | ✗ | Executed by both tools; no confirmed exploitation |
-| `juiceshop_login` | Juice Shop | ✗ | ✓ | SQLiRLLM detected with 3/6 strategy successes |
+| `dvwa_sqli` | DVWA (low) | ✗ (bounded-time) | ✓ | 1/6 strategy success |
+| `dvwa_sqli_medium` | DVWA (medium) | ✗ (bounded-time) | ✓ | 1/6 strategy success |
+| `dvwa_sqli_hard` | DVWA (hard) | ✗ (bounded-time) | ✓ | 1/6 strategy success |
+| `dvwa_sqli_max` | DVWA (impossible) | ✗ (bounded-time) | ✓ | 1/6 strategy success |
+| `dvwa_waf` | DVWA+ModSecurity | ✗ (bounded-time) | ✗ | WAF target; bypass remained 0.0 |
+| `sqli_labs_1` | sqli-labs Less-1 | ✗ (bounded-time) | ✓ | 2/6 strategy success |
+| `sqli_labs_11` | sqli-labs Less-11 | ✗ (bounded-time) | ✗ | No SQLiRLLM strategy succeeded |
+| `bwapp_sqli` | bWAPP | ✗ (bounded-time) | ✗ | No SQLiRLLM strategy succeeded |
+| `juiceshop_login` | Juice Shop | ✗ (bounded-time) | ✓ | 5/6 strategy successes |
 
 ### Live Summary
 
 | Domain | Method | Detection rate | ESR |
 |---|---|---|---|
-| Live (Docker) | SQLMap | 0.000 |
-| Live (Docker) | SQLiRLLM | **0.429** | **1.000** |
+| Live (Docker) | SQLMap | 0/9 = 0.000 | — |
+| Live (Docker) | SQLiRLLM | **6/9 = 0.667** | **1.000** |
 
 ### Interpretation
 
-- Full target coverage was completed for both tools: all **7/7** selected labs are present in `results/live/sqlmap_results.json` and `results/live/sqlirllm_results.json`.
-- SQLiRLLM detected vulnerabilities on **3/7 platforms (42.9%)** in this strict no-cache run, with successful detections on `dvwa_sqli`, `sqli_labs_1`, and `juiceshop_login`.
-- SQLMap executed all seven targets but had multiple bounded-time outcomes (`timeout_s=180`), resulting in no confirmed detections in this run.
+- Full target coverage was completed for SQLiRLLM on **9/9** selected labs.
+- SQLiRLLM detected vulnerabilities on **6/9 platforms (66.7%)**, including all four DVWA difficulty levels, `sqli_labs_1`, and `juiceshop_login`.
+- SQLMap was executed under bounded-time settings and produced no confirmed detections on evaluated targets in this run configuration.
 - Live outcomes remain a feasibility-oriented validation; statistical conclusions should use repeated runs/seeds and confidence intervals.
 
 ### WAF-Bypass Improvement Notes
@@ -385,7 +387,7 @@ To improve WAF bypass behavior, the payload layer was extended with adaptive pol
 3. Quote/comment style rotation and alternative time-based rewrite paths.
 4. Live feedback loop: when a request is blocked, subsequent attempts switch to an explicit WAF-evasion phase.
 
-In this run, these changes improved payload diversity and reproducibility (strict no-cache, verified API calls), but **did not increase measured WAF bypass on `dvwa_waf`** (`waf_bypass_rate = 0.0`). This indicates the current evasion policy still underfits the active ModSecurity CRS ruleset.
+In this rerun, these changes improved payload diversity and platform coverage, but **did not increase measured WAF bypass on `dvwa_waf`** (`waf_bypass_rate = 0.0`). This indicates the current evasion policy still underfits the active ModSecurity CRS ruleset.
 
 ### Why SSQLi WAF Bypass Can Be Much Higher
 
