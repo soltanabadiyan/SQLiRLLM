@@ -114,6 +114,50 @@ python -m experiments.run_comparison --episodes 400 --targets 40 --seed 42
 
 Results appear in `results/` (CSV + PNG figures + `summary.json`).
 
+---
+
+## 🔄 Enhanced WAF Evasion Strategy (v2)
+
+### Motivation
+Initial live testing revealed **0.0 WAF bypass rate** on ModSecurity-CRS despite 62.2% success in simulation. Naive keyword mutations and whitespace rotation proved insufficient against production WAF rule bases.
+
+### Adaptive Multi-Level Evasion
+The enhanced payload generator implements **4-level escalation** based on attempt count:
+
+**Level 0: Basic Obfuscation**
+- Keyword case mixing (UNION → UnIoN)
+- Whitespace rotation: `/**/`, `%0a`, `%09`
+- Simple comment insertion: `un/**/ion`
+
+**Level 1: Encoding Chains**
+- URL encoding: `SELECT` → `S%45LECT`
+- Character swaps: `'` → `%27`, `--` → `%23`
+- MySQL versioned comments: `/*!50000SELECT*/`
+
+**Level 2: Double Encoding + Aggressive Mutations**
+- Double URL: `%253D` for `=`
+- Aggressive fragmentation: `s/**/e/**/l/**/e/**/c/**/t`
+- String literals as hex: `'admin'` → `0x61646d696e`
+
+**Level 3: Maximum Obfuscation**
+- Semantic equivalence: `SLEEP(5)` → `BENCHMARK(500000, MD5(1))`
+- Operator alternatives: `=` → `<=>`
+- Null bytes: `%0b`, `%0c` insertion
+- Hex encoding for expressions
+
+### Feedback-Guided Adaptation
+1. Detect blocked responses (HTTP 403/406, ModSecurity signature)
+2. Infer triggered filters from response and payload analysis
+3. Provide targeted LLM feedback: "Use aggressive URL encoding", "Try nested comments"
+4. Escalate obfuscation for next attempt
+
+### LLM Integration
+- Enhanced prompts include WAF evasion techniques for WAF-protected targets
+- Per-attempt escalation guidance: Attempt 0 → diverse, Attempt 1 → encoding, Attempt 2 → aggressive, Attempt 3+ → maximum
+- Post-LLM obfuscation pass applies multi-level mutations before sending
+
+---
+
 ### 4 — Start the Docker vulnerable-application stack
 
 ```bash

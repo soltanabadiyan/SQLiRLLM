@@ -164,6 +164,44 @@ def probe(target: LiveHTTPTarget, payload: str, timeout: float = 12.0) -> Execut
     return ExecutionResponse(status, body, latency, outcome)
 
 
+def _infer_waf_filters(payload: str, response: ExecutionResponse, attempt: int) -> str:
+    """Infer which WAF filters were likely triggered based on response and payload."""
+    if response.outcome != Outcome.BLOCKED or not response.body:
+        return ""
+    
+    body_lower = response.body.lower()
+    signals = []
+    
+    # Detect keyword-based filters
+    dangerous_keywords = [
+        "union", "select", "from", "where", "and", "or", "sleep",
+        "information_schema", "benchmark", "load_file", "into", "order", "group"
+    ]
+    for kw in dangerous_keywords:
+        if kw in payload.lower():
+            signals.append(f"keyword '{kw}' may have triggered filter")
+    
+    # Detect encoding/obfuscation detection
+    if "%" in payload and "encode" in body_lower:
+        signals.append("URL encoding detected by WAF")
+    if "/*" in payload and ("comment" in body_lower or "syntax" in body_lower):
+        signals.append("SQL comments detected as suspicious")
+    if "%27" in payload or "%22" in payload:
+        signals.append("Character encoding detected")
+    
+    # Specific CRS patterns
+    if "modsecurity" in body_lower:
+        if attempt == 0:
+            signals.append("Use aggressive URL encoding and character substitution")
+        elif attempt == 1:
+            signals.append("ModSecurity active; try double-encoding and nested comments")
+        else:
+            signals.append("ModSecurity resisting; escalate to semantic variations and hex encoding")
+    
+    feedback = "; ".join(signals) if signals else "WAF blocked payload; escalate evasion techniques"
+    return feedback[:256]
+
+
 # --------------------------------------------------------------------------- #
 # Per-target test                                                              #
 # --------------------------------------------------------------------------- #
@@ -274,7 +312,8 @@ def test_target(
                     feedback = "WAF bypassed on previous attempt; prioritize exploit confirmation"
                 else:
                     context["phase"] = "waf_evasion"
-                    feedback = "Previous payload was blocked by WAF; use a different encoding and token split"
+                    # Use intelligent feedback inference
+                    feedback = _infer_waf_filters(payload, response, attempt)
 
             analysis = analyzer.analyze(strategy, response)
 

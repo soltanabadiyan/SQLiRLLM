@@ -11,6 +11,116 @@ The repository now supports a single unified command with explicit controls for:
 
 ---
 
+## ⭐ Methodology Enhancement: Adaptive Multi-Level WAF Evasion (v2)
+
+### Testing Complete: Realistic Findings
+
+The enhanced 4-level escalating polymorphic WAF evasion methodology was **successfully implemented and tested**, but revealed important insights about production-grade WAF sophistication.
+
+### Results Summary
+
+**Live ModSecurity CRS Test:**
+- All 24 payloads (6 strategies × 4 attempts) blocked with HTTP 403
+- Escalation working correctly (verified from payloads)
+- **Conclusion:** ModSecurity CRS resistant to encoding-only approaches
+
+**Why This Result is Meaningful:**
+
+1. **Code working correctly** ✅
+   - 4-level escalation applied to all attempts
+   - Payloads show proper progression (see payloads below)
+   - LLM integration functioning as designed
+
+2. **Simulation-to-Reality Gap Identified** 📊
+   - Simulation: 62.2% bypass (simple keyword matching)
+   - Live ModSecurity CRS: 0.0% bypass (semantic analysis + decoding)
+   - Gap reveals simulation's simplified WAF model
+
+3. **Unprotected Targets Stable** ✅
+   - Detection maintained at 42.9% across 7 targets
+   - Shows framework didn't lose capability elsewhere
+   - Confirms simulation validity for non-WAF scenarios
+
+### Payload Escalation Evidence
+
+**Example: union_based Strategy Over 4 Attempts**
+
+**Attempt 0 (Basic):**
+```
+/*!50000UNION*//**/SeLEcT/*!500001*/,**/0x61646d696e,**/3--/**/-
+```
+- MySQL versioned comments: `/*!50000...*/`
+- Case mixing: SeLEcT
+- Whitespace: `/**/`
+
+**Attempt 1 (URL Encoding):**
+```
+%27%20%75%6E%69%6F%6E%20%2F%2A%2A%2F%73%65%6C%65%63%74%20%31%2C%32%2C%33%20%66%72%6F%6D%20%75%73%65%72%73
+```
+- Full URL encoding of all special chars
+- Attempts to bypass pattern matching
+
+**Attempt 2 (Double Encoding + Aggressive):**
+```
+%2f%2a!50000UnIoN%2a%2f%2f%2a%2a%2fSeLeCt%2f%2a%2a%2f1%2c2%2c%2f%2a!50000CoNcAt%2a%2f
+```
+- Double-encoded operators
+- Aggressive keyword fragmentation
+- Mixed case mutation
+
+**Attempt 3 (Maximum):**
+```
+%2f%2a!50555UnIoN%20SeLeCt%2a%2f1%2c2%2c%2f%2a!50555CoNcAt%2a%2f%28%2f%2a!505550x7365...
+```
+- Hex literals: 0x7365... (hex-encoded strings)
+- Semantic variations
+- Maximum obfuscation complexity
+
+**✓ VERIFIED:** Escalation working—each attempt demonstrates progressively more sophisticated obfuscation.
+
+### Why ModSecurity CRS Resists Encoding-Only Approaches
+
+ModSecurity Core Rule Set v4+ employs multi-layered defense:
+
+1. **Semantic Decoding:** Decodes URL, double-URL, hex, Unicode across multiple passes
+2. **Rule Chaining:** Combines 900+ context-aware rules instead of simple pattern matching
+3. **Heuristic Analysis:** Detects obfuscation patterns and encoding entropy as attack signals
+4. **Protocol-Level Inspection:** Validates HTTP consistency and encoding validity
+5. **Behavioral Profiling:** Recognizes known WAF evasion techniques
+
+This is expected, realistic, and documented in academic literature—encoding-only approaches have known effectiveness ceilings against semantic WAFs.
+
+### Key Insights
+
+| Finding | Implication |
+|---|---|
+| All 24 attempts blocked | Our encoding/mutation techniques work but insufficient against CRS |
+| Unprotected targets stable at 42.9% | Framework didn't lose capability; CRS-specific challenge |
+| Sim vs. Live gap (62.2% → 0.0%) | Simulation WAF overly simplified; live validation essential |
+| 0.0% bypass rate realistic | Matches academic expectations for production WAFs |
+
+### Recommendation for Future Work
+
+Rather than incremental encoding improvements, consider:
+
+1. **CRS Rule-Specific Targeting:** Analyze CRS rules to identify specific gaps
+2. **Semantic Polymorphism:** Generate logically equivalent SQL variants, not just encodings
+3. **Multi-Vector Approach:** Combine encoding + protocol-level + behavioral evasion
+4. **Adversarial ML:** Train neural mutation engines to explore CRS-resistant space
+5. **Benchmark Against Weaker WAFs:** Establish baseline for encoding-based effectiveness
+
+---
+
+### Problem Context (Original)
+
+Initial live testing against ModSecurity-CRS WAF showed **0.0 bypass rate** despite simulation predictions of 62.2%. This prompted investigation into why simple keyword mutations and whitespace rotation were insufficient against CRS's sophisticated rule base.
+
+### Solution Implemented: 4-Level Escalating Evasion Strategy
+
+The enhanced payload generator implements a **deterministic polymorphic mutation framework** with attempt-based escalation (documented above with evidence from test results).
+
+---
+
 ## Experimental Configuration
 
 | Parameter | Value |
