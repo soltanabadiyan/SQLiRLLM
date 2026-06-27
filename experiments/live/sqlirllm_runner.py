@@ -259,9 +259,10 @@ def test_target(
 
         result.strategies_tried += 1
         succeeded = False
+        feedback = ""
 
         for attempt in range(max_attempts):
-            payload = payload_gen.generate(strategy, context, attempt)
+            payload = payload_gen.generate(strategy, context, attempt, feedback=feedback)
             escore = evasion_score(payload)
             response = probe(target, payload, timeout=request_timeout)
 
@@ -269,6 +270,11 @@ def test_target(
                 result.waf_encounters += 1
                 if response.outcome != Outcome.BLOCKED:
                     result.waf_bypasses += 1
+                    context["phase"] = "verification"
+                    feedback = "WAF bypassed on previous attempt; prioritize exploit confirmation"
+                else:
+                    context["phase"] = "waf_evasion"
+                    feedback = "Previous payload was blocked by WAF; use a different encoding and token split"
 
             analysis = analyzer.analyze(strategy, response)
 

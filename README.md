@@ -230,6 +230,8 @@ where $Time_{norm}$ maps lower mean time to higher utility. This score is intend
 The real-target Docker evaluation was run against:
 
 - DVWA
+- DVWA (medium)
+- DVWA + ModSecurity WAF
 - sqli-labs Less-1
 - sqli-labs Less-11
 - bWAPP
@@ -239,15 +241,13 @@ Observed live detection rates:
 
 | Tool | Live detection rate |
 |---|---|
-| SQLMap | 2/5 = 40% |
-| **SQLiRLLM** | **3/5 = 60%** |
+| SQLMap | 0/7 = 0.0% (bounded-time setting) |
+| **SQLiRLLM** | **3/7 = 42.9%** |
 
-SQLMap confirmed vulnerabilities on **bWAPP** and **Juice Shop** when given the
-exact injectable parameter and authenticated session context. SQLiRLLM confirmed
-vulnerabilities on **sqli-labs Less-1**, **bWAPP**, and **Juice Shop**. The
-remaining misses were dominated by application-state issues (DVWA setup/session)
-or platform/version mismatches rather than hard false negatives on a stable,
-known-good endpoint.
+In the finalized strict no-cache run, SQLiRLLM confirmed vulnerabilities on
+**dvwa_sqli**, **sqli-labs Less-1**, and **Juice Shop**. SQLMap completed all
+7 targets under bounded process time but did not confirm a successful exploit in
+this configuration.
 
 ## Statistical Reporting Recommendations
 
@@ -362,7 +362,7 @@ Optional environment variables:
 
 ```bash
 EPISODES=800 TARGETS_N=60 SEED=42 ./run_full_report.sh
-SKIP_SIM=1 LIVE_TARGETS="dvwa_sqli sqli_labs_1 bwapp_sqli juiceshop_login" ./run_full_report.sh
+SKIP_SIM=1 LIVE_TARGETS="dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" ./run_full_report.sh
 ```
 
 ### Full Control (Hyperparameters + Attack Types + Tool Selection + Lab Selection)
@@ -375,7 +375,7 @@ You can configure all major experiment controls directly from one command:
         --targets-n 60 \
         --seed 42 \
         --run-tools both \
-        --live-targets "dvwa_sqli dvwa_waf sqli_labs_1 bwapp_sqli juiceshop_login" \
+        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
         --sqlirllm-strategies "error_based,time_blind,union_based" \
         --sqlirllm-max-attempts 4 \
         --sqlirllm-timeout 15 \
@@ -413,7 +413,7 @@ bash ./run_full_report.sh \
         --targets-n 60 \
         --seed 42 \
         --run-tools both \
-        --live-targets "dvwa_sqli dvwa_waf sqli_labs_1 bwapp_sqli juiceshop_login" \
+        --live-targets "dvwa_sqli dvwa_sqli_medium dvwa_waf sqli_labs_1 sqli_labs_11 bwapp_sqli juiceshop_login" \
         --sqlirllm-strategies "error_based,time_blind,union_based" \
         --sqlirllm-max-attempts 4 \
         --sqlirllm-timeout 15 \
@@ -445,8 +445,8 @@ Observed live summary for selected labs:
 
 | Tool | Detected / Total | Detection rate |
 |---|---:|---:|
-| SQLMap | 0 / 2* | 0.000 |
-| SQLiRLLM | 2 / 5 | 0.400 |
+| SQLMap | 0 / 7 | 0.000 |
+| SQLiRLLM | 3 / 7 | 0.429 |
 
 \* SQLMap rows with timeout/errors are excluded from the denominator by the current report builder.
 

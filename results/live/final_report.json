@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-06-27 18:23:49Z",
+  "generated_utc": "2026-06-27 18:48:28Z",
   "run_config": {
-    "episodes": "800",
-    "targets_n": "60",
+    "episodes": "400",
+    "targets_n": "40",
     "seed": "42",
     "skip_sim": "1",
     "run_tools": "both",

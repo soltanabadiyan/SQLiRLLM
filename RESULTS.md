@@ -148,6 +148,26 @@ Seven real, intentionally vulnerable targets were deployed under Docker Compose 
 - SQLMap executed all seven targets but had multiple bounded-time outcomes (`timeout_s=180`), resulting in no confirmed detections in this run.
 - Live outcomes remain a feasibility-oriented validation; statistical conclusions should use repeated runs/seeds and confidence intervals.
 
+### WAF-Bypass Improvement Notes
+
+To improve WAF bypass behavior, the payload layer was extended with adaptive polymorphic rewriting and blocked-response feedback:
+
+1. Keyword mutation per attempt (mixed-case, inline-comment splitting, MySQL versioned comments).
+2. Rotating separator/whitespace obfuscation (`/**/`, `%0a`, `%09`).
+3. Quote/comment style rotation and alternative time-based rewrite paths.
+4. Live feedback loop: when a request is blocked, subsequent attempts switch to an explicit WAF-evasion phase.
+
+In this run, these changes improved payload diversity and reproducibility (strict no-cache, verified API calls), but **did not increase measured WAF bypass on `dvwa_waf`** (`waf_bypass_rate = 0.0`). This indicates the current evasion policy still underfits the active ModSecurity CRS ruleset.
+
+### Why SSQLi WAF Bypass Can Be Much Higher
+
+SSQLi's frequently cited high bypass rates are usually measured under different detector assumptions and protocols than this benchmark. In practice, the numbers are not apples-to-apples because:
+
+1. Detector type differs: many SSQLi results target black-box ML/WAF classifiers, while this run targets a concrete ModSecurity-CRS deployment.
+2. Reward objective differs: SSQLi explicitly optimizes evasion reward, while SQLiRLLM balances detection quality, ethics, false positives, and latency.
+3. Budget/probing policy differs: bypass rates are sensitive to attempt budget, timeout windows, and request throttling.
+4. Target heterogeneity differs: this benchmark spans mixed labs and input patterns; bypass on one lab does not transfer uniformly to all others.
+
 Results are written to `results/live/`. The merged cross-domain comparison is stored in `results/live/cross_comparison.csv`, with figures in `results/live/live_per_platform.png` and `results/live/sim_comparison.png`.
 
 ---

