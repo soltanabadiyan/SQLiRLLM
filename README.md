@@ -114,6 +114,24 @@ python -m experiments.run_comparison --episodes 400 --targets 40 --seed 42
 
 Results appear in `results/` (CSV + PNG figures + `summary.json`).
 
+## Documentation
+
+### Project Docs Index
+
+- `docs/PROJECT_DOCS_INDEX.md` — entry point to the full documentation map.
+
+### Comprehensive Project Guides
+
+- `docs/PROJECT_OVERVIEW.md` — end-to-end architecture, pipeline modes, and project goals.
+- `docs/CODEBASE_REFERENCE.md` — module/file responsibilities and task-to-file mapping.
+- `docs/OPERATIONS_RUNBOOK.md` — setup, execution commands, validation, and troubleshooting.
+- `docs/RESULTS_ARTIFACTS_DICTIONARY.md` — complete semantics for generated result artifacts.
+
+### AI-Oriented Understanding Guides
+
+- `docs/AI_SYSTEM_CONTEXT.md` — compact machine-oriented project briefing.
+- `docs/AI_EDITING_PLAYBOOK.md` — safe edit locations, invariants, and change workflows for coding agents.
+
 ---
 
 ## 🔄 Enhanced WAF Evasion Strategy (v2)
